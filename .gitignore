@@ -1,3 +1,9 @@
-  target/
-  .mvn/
-  .idea/
+# IDE & System Files
+.idea/
+*.iml
+.DS_Store
+
+# Maven Build Artifacts
+target/
+*.class
+*.jar
