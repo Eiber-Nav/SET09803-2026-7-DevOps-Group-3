@@ -1,4 +1,7 @@
+# SET09803 DevOps Environment Setup
+# Purpose: Orchestrates the MySQL database and Java application services.
 services:
+  # MySQL Database Service
   db:
     image: mysql:latest
     environment:
@@ -7,8 +10,9 @@ services:
     ports:
       - "3306:3306"
     volumes:
+      # Automatically initializes the database schema and sample data on container startup
       - ./world.sql:/docker-entrypoint-initdb.d/world.sql
-
+  # Java Application Service
   app:
     build: .
     depends_on:
