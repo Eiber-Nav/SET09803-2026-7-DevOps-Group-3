@@ -1,11 +1,11 @@
-package org.example;
+package com.napier.devops;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class Main {
+public class App {
     public static void main(String[] args) {
         // Use "localhost:3306" when running locally, or "db:3306" inside Docker container
         String url = "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true";

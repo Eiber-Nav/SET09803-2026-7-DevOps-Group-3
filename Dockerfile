@@ -7,4 +7,4 @@ COPY ./target/classes/org/example /tmp/org/example
 # Set working directory inside the container
 WORKDIR /tmp
 # Entrypoint command to launch the application
-ENTRYPOINT ["java", "org.example.Main"]
+ENTRYPOINT ["java", "-cp", "app.jar", "com.napier.devops.App"]
