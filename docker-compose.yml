@@ -1,5 +1,6 @@
 # SET09803 DevOps Environment Setup
 # Purpose: Orchestrates the MySQL database and Java application services.
+# Testing Commit
 services:
   # MySQL Database Service
   db:
