@@ -6,7 +6,7 @@ services:
   db:
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: examplepassword
+      MYSQL_ROOT_PASSWORD: D@to0000
       MYSQL_DATABASE: world
     ports:
       - "3306:3306"
