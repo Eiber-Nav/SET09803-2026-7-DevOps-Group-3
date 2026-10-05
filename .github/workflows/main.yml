@@ -1,0 +1,40 @@
+# GitHub Actions CI/CD Pipeline
+# Purpose: Automatically verifies that the Java app compiles and Docker containers build cleanly on every push or Pull Request.
+
+name: Java & Docker CI Pipeline
+
+# Triggers: Run automatically when code is updated on main branches
+on:
+  push:
+    branches: [ "master", "develop" ]
+  pull_request:
+    branches: [ "master", "develop" ]
+
+jobs:
+  build:
+    # Virtual machine environment hosted by GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+    # Pulls down your repository code into the virtual runner
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # Installs JDK 17 (Temurin) required to compile the application
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    # Grants execution permissions to the Maven Wrapper script on Linux
+    - name: Make Maven Wrapper Executable
+      run: chmod +x mvnw
+
+    # Compiles the Java project and creates the JAR file
+    - name: Build with Maven Wrapper
+      run: ./mvnw clean package
+
+    # Builds and tests the MySQL and Java Docker containers defined in docker-compose.yml
+    - name: Test Docker Compose Setup
+      run: docker compose up -d --build
