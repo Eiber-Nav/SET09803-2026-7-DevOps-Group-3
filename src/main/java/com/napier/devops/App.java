@@ -10,7 +10,7 @@ public class App {
         // Use "localhost:3306" when running locally, or "db:3306" inside Docker container
         String url = "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true";
         String user = "root";
-        String password = "examplepassword";
+        String password = "D@to0000";
 
         try {
             Connection con = DriverManager.getConnection(url, user, password);
