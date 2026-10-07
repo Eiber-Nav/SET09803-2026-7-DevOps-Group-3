@@ -1,36 +1,55 @@
-# GitHub Actions CI/CD Pipeline
-# Purpose: Automatically verifies that the Java app compiles and Docker containers build cleanly on every push or Pull Request.
-
+# Purpose: Automatically verifies that the Java app compiles and Docker containers build cleanly on every push or Pull Requests for all branches.
 name: Java & Docker CI Pipeline
 
-# Triggers: Run automatically when code is updated on main branches
+# Triggers: Run automatically when code is updated on all branches
 on:
   push:
-    branches: [ "master", "develop" ]
   pull_request:
-    branches: [ "master", "develop" ]
-
+  
+# Job 1: Run tests first
 jobs:
-  build:
-    # Virtual machine environment hosted by GitHub
-    runs-on: ubuntu-latest
-
+unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-22.04
     steps:
-    # Pulls down your repository code into the virtual runner
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      # Runs targeted unit tests without building full Docker images
+      - name: Run Unit Tests
+        run: mvn -Dtest=com.napier.sem.AppTest test
 
-    # Installs JDK 17 (Temurin) required to compile the application
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+# Job 2: Build and run integration tests inside Docker
+  docker-build:
+    name: Build & Test Docker Compose
+    needs: unit-tests  # Only run Docker tests if unit tests pass!
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    # Compiles the Java project and creates the JAR file using standard Maven
-    - name: Build with Maven
-      run: mvn clean package
+      # Package the app executable (skipping unit tests as they passed in job 1)
+      - name: Package Application
+        run: mvn package -DskipTests
 
-    # Builds and tests the MySQL and Java Docker containers defined in docker-compose.yml
-    - name: Test Docker Compose Setup
-      run: docker compose up -d --build
+# Package the app executable (skipping unit tests as they passed in job 1)
+      - name: Package Application
+        run: mvn package -DskipTests
+
+      # Runs containers and halts if app crashes
+      - name: Run Docker Compose
+        run: docker compose up --abort-on-container-exit
+
+      # Prints app output to GitHub logs for marking
+      - name: View Application Logs
+        if: always()  # Runs even if previous step fails to get troubheshoot info
+        run: docker logs semcode-app-1
