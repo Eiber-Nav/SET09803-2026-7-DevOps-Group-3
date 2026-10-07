@@ -49,7 +49,7 @@ jobs:
       - name: Run Docker Compose
         run: docker compose up --abort-on-container-exit
 
-      # Print container logs to GitHub UI even if the build fails
+      # Print container logs using docker compose
       - name: View Application Logs
         if: always()
-        run: docker logs semcode-app-1
+        run: docker compose logs
