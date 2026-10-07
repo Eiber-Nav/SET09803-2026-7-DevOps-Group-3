@@ -1,12 +1,11 @@
 name: Java & Docker CI Pipeline
-
-# Triggers: Run automatically when code is updated on all branches
+#Triggers: Run automatically when code is updated on all branches
 on:
   push:
   pull_request:
-  
-# Job 1: Run tests first
+#Job 1: Run tests first
 jobs:
+#Job 1: Run unit tests first
 unit-tests:
     name: Unit Tests
     runs-on: ubuntu-22.04
@@ -18,11 +17,10 @@ unit-tests:
         with:
           java-version: '17'
           distribution: 'temurin'
-      # Runs targeted unit tests without building full Docker images
+#Runs targeted unit tests without building full Docker images
       - name: Run Unit Tests
         run: mvn -Dtest=com.napier.sem.AppTest test
-
-# Job 2: Build and run integration tests inside Docker
+# Build and run integration tests inside Docker
   docker-build:
     name: Build & Test Docker Compose
     needs: unit-tests  # Only run Docker tests if unit tests pass!
@@ -36,19 +34,15 @@ unit-tests:
           java-version: '17'
           distribution: 'temurin'
 
-      # Package the app executable (skipping unit tests as they passed in job 1)
       - name: Package Application
         run: mvn package -DskipTests
 
-# Package the app executable (skipping unit tests as they passed in job 1)
       - name: Package Application
         run: mvn package -DskipTests
 
-      # Runs containers and halts if app crashes
       - name: Run Docker Compose
         run: docker compose up --abort-on-container-exit
 
-      # Prints app output to GitHub logs for marking
       - name: View Application Logs
-        if: always()  # Runs even if previous step fails to get troubheshoot info
+        if: always()
         run: docker logs semcode-app-1
