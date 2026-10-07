@@ -23,7 +23,7 @@ jobs:
 
       # Runs targeted unit tests without building Docker images
       - name: Run Unit Tests
-        run: mvn -Dtest=com.napier.sem.AppTest test
+        run: mvn -Dtest=com.napier.devops.AppTest test
 
   # Job 2: Build and test Docker containers
   docker-build:
