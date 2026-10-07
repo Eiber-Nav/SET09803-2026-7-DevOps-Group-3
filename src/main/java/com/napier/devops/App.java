@@ -7,8 +7,8 @@ import java.sql.Statement;
 
 public class App {
     public static void main(String[] args) {
-        // Use "localhost:3306" when running locally, or "db:3306" inside Docker container
-        String url = "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true";
+        // Points to the "db" container service defined in docker-compose.yml
+        String url = "jdbc:mysql://db:3306/world?useSSL=false&allowPublicKeyRetrieval=true";
         String user = "root";
         String password = "D@to0000";
 
