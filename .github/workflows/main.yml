@@ -1,4 +1,3 @@
-# Purpose: Automatically verifies that the Java app compiles and Docker containers build cleanly on every push or Pull Requests for all branches.
 name: Java & Docker CI Pipeline
 
 # Triggers: Run automatically when code is updated on all branches
