@@ -1,27 +1,30 @@
 package com.napier.devops;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 
 public class App {
     public static void main(String[] args) {
-        // Points to the "db" container service defined in docker-compose.yml
-        String url = "jdbc:mysql://db:3306/world?useSSL=false&allowPublicKeyRetrieval=true";
-        String user = "root";
-        String password = "D@to0000";
-
+        // 1. Load the MySQL JDBC Driver
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT Name, Population FROM country ORDER BY Population DESC LIMIT 3");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Could not load SQL driver");
+            System.exit(-1);
+        }
 
-            System.out.println("Top 3 Countries by Population:");
-            while (rs.next()) {
-                System.out.println(rs.getString("Name") + " - " + rs.getInt("Population"));
-            }
+        // 2. Connect to Database
+        try {
+            Connection con = DriverManager.getConnection(
+         //           "jdbc:mysql://db:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
+                    "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
+                    "root",
+                    "D@to0000"
+            );
+            System.out.println("Successfully connected to the database!");
             con.close();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Database Connection Failed:");
             e.printStackTrace();
         }
