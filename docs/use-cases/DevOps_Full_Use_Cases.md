@@ -4,9 +4,9 @@ SET09803 DevOps · Group 3 · Draft for team review · 7 October 2026
 
 Use-case documentation contribution: Thaddeus Cornish Jr. · GitHub issues #17 and #18. The team should review and agree the contents before submission. These are requirements specifications, not evidence that features have been implemented.
 
-## Scope and actor
+## Scope and actors
 
-The system provides read-only population reports from the supplied World SQL database. **Organisation User** is the primary actor for all 32 use cases. The database is treated as an internal data dependency within the Population Reporting System boundary. Login, administration, exporting, and changing population records are outside the supplied brief.
+The system provides read-only population reports from the supplied World SQL database. **Organisation User** is the primary actor for all 32 use cases. The system boundary covers only the reporting application. **World SQL Database** is an external supporting actor that provides the supplied population data for all 32 use cases. The database does not initiate reports or make user selections. Login, administration, exporting, and changing population records are outside the supplied brief.
 
 The application’s input mechanism is not fixed here: “request” and “select” can be implemented through command-line arguments, a menu, or another interface agreed by the team. The existing top-three-country demonstration is an initial implementation example, not evidence that the complete requirements are met.
 
@@ -80,7 +80,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R01 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all countries in the world, ordered from largest population to smallest.
 
@@ -107,7 +109,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R02 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all countries in a continent, ordered from largest population to smallest.
 
@@ -136,7 +140,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R03 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all countries in a region, ordered from largest population to smallest.
 
@@ -165,7 +171,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R04 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N countries in the world, ordered from largest population to smallest.
 
@@ -196,7 +204,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R05 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N countries in a continent, ordered from largest population to smallest.
 
@@ -228,7 +238,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R06 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N countries in a region, ordered from largest population to smallest.
 
@@ -260,7 +272,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R07 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all cities in the world, ordered from largest population to smallest.
 
@@ -286,7 +300,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R08 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all cities in a continent, ordered from largest population to smallest.
 
@@ -314,7 +330,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R09 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all cities in a region, ordered from largest population to smallest.
 
@@ -342,7 +360,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R10 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all cities in a country, ordered from largest population to smallest.
 
@@ -370,7 +390,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R11 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all cities in a district, ordered from largest population to smallest.
 
@@ -398,7 +420,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R12 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N cities in the world, ordered from largest population to smallest.
 
@@ -428,7 +452,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R13 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N cities in a continent, ordered from largest population to smallest.
 
@@ -459,7 +485,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R14 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N cities in a region, ordered from largest population to smallest.
 
@@ -490,7 +518,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R15 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N cities in a country, ordered from largest population to smallest.
 
@@ -521,7 +551,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R16 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N cities in a district, ordered from largest population to smallest.
 
@@ -552,7 +584,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R17 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all capital cities in the world, ordered from largest population to smallest.
 
@@ -579,7 +613,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R18 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all capital cities in a continent, ordered from largest population to smallest.
 
@@ -608,7 +644,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R19 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare all capital cities in a region, ordered from largest population to smallest.
 
@@ -637,7 +675,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R20 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N capital cities in the world, ordered from largest population to smallest.
 
@@ -668,7 +708,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R21 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N capital cities in a continent, ordered from largest population to smallest.
 
@@ -700,7 +742,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R22 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare the top N capital cities in a region, ordered from largest population to smallest.
 
@@ -732,7 +776,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R23 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare total population and recorded city/non-city population across every continent.
 
@@ -763,7 +809,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R24 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare total population and recorded city/non-city population across every region.
 
@@ -794,7 +842,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R25 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare total population and recorded city/non-city population across every country.
 
@@ -825,7 +875,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R26 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Retrieve the total world population recorded in the supplied database.
 
@@ -850,7 +902,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R27 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Retrieve the population for the requested continent.
 
@@ -877,7 +931,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R28 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Retrieve the population for the requested region.
 
@@ -904,7 +960,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R29 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Retrieve the population for the requested country.
 
@@ -931,7 +989,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R30 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Retrieve the population for the requested district.
 
@@ -958,7 +1018,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R31 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Retrieve the population for the requested city.
 
@@ -985,7 +1047,9 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R32 (the corresponding item in the coursework specification).
 
-**Actor:** Organisation User.
+**Primary actor:** Organisation User.
+
+**Supporting actor:** World SQL Database (provides the data queried by the application).
 
 **Goal:** Compare estimated Chinese, English, Hindi, Spanish and Arabic speaker populations and their shares of world population.
 
@@ -1021,7 +1085,7 @@ Required output: Language; Estimated Speakers; World Population %.
 | Look up population            | UC26–UC31          | World; selected continent, region, country, district, city |
 | View language-speaker report  | UC32               | Chinese, English, Hindi, Spanish, Arabic                   |
 
-The companion SVG is an editable vector diagram. Its solid lines are actor-to-use-case associations, not data flow arrows. No include or extend relationship is asserted.
+The companion SVG is an editable vector diagram. Organisation User and World SQL Database are outside the reporting application boundary and are associated with all six report families. Its solid lines are actor-to-use-case associations, not data flow arrows. No include or extend relationship is asserted.
 
 ## Backlog alignment and team review
 
