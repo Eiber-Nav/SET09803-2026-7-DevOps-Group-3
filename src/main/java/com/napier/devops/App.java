@@ -17,8 +17,8 @@ public class App {
         // 2. Connect to Database
         try {
             Connection con = DriverManager.getConnection(
-         //           "jdbc:mysql://db:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
-                    "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
+                    "jdbc:mysql://db:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
+           //         "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
                     "root",
                     "D@to0000"
             );
