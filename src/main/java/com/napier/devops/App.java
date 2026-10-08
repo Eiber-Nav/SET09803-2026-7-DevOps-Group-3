@@ -18,7 +18,7 @@ public class App {
         try {
             Connection con = DriverManager.getConnection(
                     // Use "localhost:3306" when running locally, or "db:3306" inside Docker container
-                    "jdbc:mysql://db:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
+                    "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
 
                     "root",
                     "D@to0000"
