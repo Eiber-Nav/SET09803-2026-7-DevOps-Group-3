@@ -8,7 +8,7 @@ Population Reporting System built with Java 17, Maven, MySQL, and Docker.
 * **`docker-compose.yml`** - Spins up the MySQL database container (`world`) and the app container.
 * **`pom.xml`** - Manages project dependencies (MySQL Connector) and Maven configurations.
 * **`db/`** - Contains database initialization assets, including the sample schema and dataset executed automatically during container start up.
-* **`src/`** - Application source code (`src/main` for production code and `src/test` for JUnit 5 unit tests).
+* **`src/`** - Application source code (`src/main` for production code).
 * **`.github/workflows/`** - Contains GitHub Actions CI/CD pipeline automation for continuous integration and deployment testing.
 * **`docs/use-cases/`** - Stores project documentation and use case specifications.
 * **`CODE_OF_CONDUCT.md`** - Sets expectations for team collaboration and professional standards.
