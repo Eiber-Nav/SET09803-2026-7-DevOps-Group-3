@@ -1,9 +1,9 @@
 package com.napier.devops;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
@@ -12,14 +12,11 @@ public class App {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Could not load the MySQL driver.",
-                    "Driver Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            System.out.println("Could not load the MySQL driver.");
+            e.printStackTrace();
             return;
         }
+        Scanner inputScanner = new Scanner(System.in);
 
 // Try to connect to the world database
         try (
@@ -29,52 +26,27 @@ public class App {
                         "D@to0000"
                 )
         ) {
-
 // Show clearly that the database connection worked
-            System.out.println(
-                    "Successfully connected to the world database."
-            );
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Database Connecting..\n\n" +
-                            "Connected to world db",
-                    "Database Report",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            System.out.println("Database Connecting....\n");
+            System.out.println("Successfully connected to world db");
 
-/*
-* Once the database connection is confirmed,
-* keep showing the report menu until the user exits.
-*/
+// Keep showing the report menu until the user exits (0)
             while (true) {
-                ReportMenu.ReportSelection selection =
-                        ReportMenu.showReportMenu();
+                ReportMenu.ReportSelection selection = ReportMenu.showReportMenu();
                 if (selection == null) {
                     break;
                 }
 
-/*
-* Reports are not implemented yet.
-* This currently only shows the
-* development message.
-*/
+// Runs the report service (displays "still in development")
                 ReportService.runReport(selection);
-            }
-            System.out.println(
-                    "Application closed."
-            );
-        } catch (SQLException e) {
 
-// Show clearly if the database connection fails
-            System.out.println(
-                    "Database connection failed."
-            );
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Database connection failed.\n\n"
-                            + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+// Pause so the user can read the message before the menu pops up again
+                System.out.println("Press Enter to return to the menu...");
+                inputScanner.nextLine();
+            }
+            System.out.println("Application closed.");
+        } catch (SQLException e) {
+            System.out.println("Database connection failed.");
+            System.out.println("Error message: " + e.getMessage());
             e.printStackTrace();
         }}}

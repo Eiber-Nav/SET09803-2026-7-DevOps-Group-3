@@ -1,14 +1,11 @@
 package com.napier.devops;
 
-import javax.swing.*;
-import java.awt.*;
+import java.util.Scanner;
 
 public class ReportMenu {
 
 /*
 * Stores the report number selected by the user.
-* More information can be added here later when
-* the reports are connected to the database.
 */
     public static class ReportSelection {
         private final int reportNumber;
@@ -17,12 +14,10 @@ public class ReportMenu {
         }
         public int getReportNumber() {
             return reportNumber;
-        } }
+        }}
 
 /*
 * These are the reports required for the project.
-* They are shown in the menu even though the
-* report functions are still being developed.
 */
     private static final String[] REPORTS = {
             "1. All countries in the world by population",
@@ -53,75 +48,33 @@ public class ReportMenu {
     };
 
 /*
- * Shows the main report menu and returns
- * the report chosen by the user.
- */
+* Shows the text-based console menu and returns
+* the report chosen by the user, or null if they exit.
+*/
     public static ReportSelection showReportMenu() {
-        JComboBox<String> reportBox =
-                new JComboBox<>(REPORTS);
-        reportBox.setPreferredSize(
-                new Dimension(500, 30)
-        );
-        JPanel panel = new JPanel();
-        panel.setLayout(
-                new BoxLayout(
-                        panel,
-                        BoxLayout.Y_AXIS
-                )
-        );
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n========================================");
+        System.out.println("   World Population Reporting System    ");
+        System.out.println("========================================\n");
 
-        JLabel heading =
-                new JLabel(
-                        "World Population Reporting System"
-                );
-
-        heading.setFont(
-                new Font(
-                        "Arial",
-                        Font.BOLD,
-                        18
-                )
-        );
-
-        panel.add(heading);
-        panel.add(
-                Box.createVerticalStrut(15)
-        );
-
-        panel.add(
-                new JLabel("Choose a report:")
-        );
-
-        panel.add(
-                Box.createVerticalStrut(5)
-        );
-
-        panel.add(reportBox);
-
-        Object[] buttons = {
-                "Run Report",
-                "Exit"
-        };
-
-        int option =
-                JOptionPane.showOptionDialog(
-                        null,
-                        panel,
-                        "Population Reports",
-                        JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        buttons,
-                        buttons[0]
-                );
-
-// Close the application if Exit is selected
-        if (option != 0) {
-            return null;
+// Print all available reports
+        for (String report : REPORTS) {
+            System.out.println(report);
         }
-        int reportNumber =
-                reportBox.getSelectedIndex() + 1;
-        return new ReportSelection(
-                reportNumber
-        );
+        System.out.println("0. Exit Application");
+        System.out.print("\nEnter your choice (0-25): ");
+        try {
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+            if (choice == 0) {
+                return null; // Exit selected
+            }
+            if (choice >= 1 && choice <= REPORTS.length) {
+                return new ReportSelection(choice);
+            } else {
+                System.out.println("Invalid selection. Please choose a number between 0 and " + REPORTS.length + ".");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid number.");
+        }
+        return null;
     }}
