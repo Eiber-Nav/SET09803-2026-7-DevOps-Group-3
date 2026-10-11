@@ -36,6 +36,13 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- Explicitly lock down maven-resources-plugin to avoid CI lookup failures -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
