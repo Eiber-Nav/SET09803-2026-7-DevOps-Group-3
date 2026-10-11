@@ -4,8 +4,13 @@
 # SET09803 DevOps Coursework - Group 3
 Population Reporting System built with Java 17, Maven, MySQL, and Docker.
 ## Project Structure & File Guide
-* `Dockerfile` - Builds the Java application container image.
-* `docker-compose.yml` - Spins up the MySQL database container (`world`) and the app container.
-* `pom.xml` - Manages project dependencies (MySQL Connector) and Maven configurations.
-* `db/world.sql` - Sample database schema and dataset executed automatically during database initialization.
-* `src/` - Application source code.
+* **`Dockerfile`** - Builds the Java application container image.
+* **`docker-compose.yml`** - Spins up the MySQL database container (`world`) and the app container.
+* **`pom.xml`** - Manages project dependencies (MySQL Connector) and Maven configurations.
+* **`db/`** - Contains database initialization assets, including the sample schema and dataset executed automatically during container start-up.
+* **`src/`** - Application source code (`src/main` for production code and `src/test` for JUnit 5 unit tests).
+* **`.github/workflows/`** - Contains GitHub Actions CI/CD pipeline automation for continuous integration and deployment testing[cite: 6].
+* **`docs/use-cases/`** - Stores project documentation and use case specifications[cite: 6].
+* **`CODE_OF_CONDUCT.md`** - Sets expectations for team collaboration and professional standards[cite: 6].
+* **`Group3.xlsx`** - Group contribution tracking document[cite: 6].
+* **`LICENSE`** - Apache-2.0 open-source license documentation[cite: 6].
