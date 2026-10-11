@@ -1,7 +1,7 @@
 # SET09803 DevOps Environment Setup
 # Purpose: Orchestrates the MySQL database and Java application services.
 services:
-  # MySQL Database Service (Built from the db/ folder)
+  # MySQL Database Service (Built from the db/ folder with root credentials and pre-configured world database)
   db:
     build: db/.
     environment:
@@ -10,7 +10,7 @@ services:
     ports:
       - "3306:3306"
 
-  # Java Application Service
+  # Java Application Service (Builds the app container from the root Dockerfile and ensures db starts first)
   app:
     build: .
     depends_on:
