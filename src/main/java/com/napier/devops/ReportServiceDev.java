@@ -55,6 +55,12 @@ public class ReportServiceDev {
                 System.err.println("Database error: " + e.getMessage());
             }
         }
+
+            reportNumber = selection.getReportNumber();
+            System.out.println("\n----------------------------------------");
+            System.out.println("Report " + reportNumber + " is still in development.");
+            System.out.println("----------------------------------------\n");
+
     }
 
     // Required helper method if you still want to read custom .sql query text files from disk
