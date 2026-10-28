@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) {
 
+
 // Load the MySQL JDBC driver
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -21,7 +22,7 @@ public class App {
 // Try to connect to the world database
         try (
                 Connection con = DriverManager.getConnection(
-                        "jdbc:mysql://db:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
+                        "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true",
                         "root",
                         "D@to0000"
                 )
@@ -38,7 +39,7 @@ public class App {
                 }
 
 // Runs the report service (displays "still in development")
-                ReportService.runReport(selection);
+                ReportServiceDev.runReport(selection);
 
 // Pause so the user can read the message before the menu pops up again
                 System.out.println("Press Enter to return to the menu...");
