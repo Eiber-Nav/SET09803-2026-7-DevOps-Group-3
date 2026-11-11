@@ -33,7 +33,7 @@ public class App {
 
 // Keep showing the report menu until the user exits (0)
             while (true) {
-                ReportMenu.ReportSelection selection = ReportMenu.showReportMenu();
+                ReportMenu.ReportSelection selection = ReportMenu.showReportMenu(inputScanner);
                 if (selection == null) {
                     break;
                 }
