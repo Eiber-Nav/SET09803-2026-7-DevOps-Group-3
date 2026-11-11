@@ -7,3 +7,6 @@
 target/
 *.class
 *.jar
+
+#local config overide
+docker-compose.override.yml

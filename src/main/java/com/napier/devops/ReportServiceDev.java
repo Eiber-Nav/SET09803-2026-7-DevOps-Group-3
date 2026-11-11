@@ -6,36 +6,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 
-
-
-
-
 public class ReportServiceDev {
-    private static final String dbUrl = "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true";
-    private static final String dbUser = "root";
-    private static final String dbPassword = "D@to0000";
 
     public static void runReport(ReportMenu.ReportSelection selection) {
+        String dbUrl = "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true";
+        String dbUser = "root";       // Change to your database user
+        String dbPassword = "D@to0000"; // Change to your database password
         int reportNumber = selection.getReportNumber();
-        switch (reportNumber) {
-            case 1:
-                AllCounPop(reportNumber);
-                break;
-                default:
-                    reportNumber = selection.getReportNumber();
-                    System.out.println("\n----------------------------------------");
-                    System.out.println("Report " + reportNumber + " is still in development.");
-                    System.out.println("----------------------------------------\n");
-
-        }
-
-    }
-
-        public static void AllCounPop( int reportNumber){
+        if (reportNumber == 1) {
             System.out.println("\n----------------------------------------");
             System.out.println("Report " + reportNumber + " Running Report Loading Report 1.");
             System.out.println("----------------------------------------\n");
-            String sqlQuery = "SELECT Name, Population, continent FROM country ORDER BY Population ;";
+
+            // Database connection configuration for Docker / Local MySQL
+            // (Assuming your database name is 'world', user is 'root' or similar, check your docker-compose.yml)
+            //String dbUrl = "jdbc:mysql://localhost:3306/world?useSSL=false&allowPublicKeyRetrieval=true";
+            //String dbUser = "root";       // Change to your database user
+            //String dbPassword = "D@to0000"; // Change to your database password
+
+            // SQL query to test the 'world' database (e.g., getting top 5 countries by population)
+            String sqlQuery = "SELECT Name, Population FROM country ORDER BY Population ;";
 
             try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
                  Statement stmt = conn.createStatement();
@@ -45,14 +35,13 @@ public class ReportServiceDev {
                 int columnCount = metaData.getColumnCount();
                 // Print formatted headers (e.g., %-25s means left-align in a space of 25 characters)
                 System.out.printf("%-45s %-15s%n", metaData.getColumnName(1), metaData.getColumnName(2));
-                System.out.println("---------------------------------------------------------------");
+                System.out.println("------------------------------------------------------------");
 
                 // Print rows with aligned columns
                 int rowCount = 0;
                 while (rs.next()) {
                     String name = rs.getString(1);
                     String population = rs.getString(2);
-
 
                     // %-25s formats the name column, %-15s formats the population column
                     System.out.printf("%-50s %-15s%n", name, population);
@@ -66,4 +55,16 @@ public class ReportServiceDev {
                 System.err.println("Database error: " + e.getMessage());
             }
         }
+
+            reportNumber = selection.getReportNumber();
+            System.out.println("\n----------------------------------------");
+            System.out.println("Report " + reportNumber + " is still in development.");
+            System.out.println("----------------------------------------\n");
+
     }
+
+    // Required helper method if you still want to read custom .sql query text files from disk
+    public static String readSqlFile(String filePath) throws IOException {
+        return Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
+    }
+}

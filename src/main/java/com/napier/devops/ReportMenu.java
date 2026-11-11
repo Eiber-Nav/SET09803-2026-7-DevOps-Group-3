@@ -47,12 +47,14 @@ public class ReportMenu {
             "25. Population breakdown by country"
     };
 
-/*
-* Shows the text-based console menu and returns
-* the report chosen by the user, or null if they exit.
-*/
-    public static ReportSelection showReportMenu() {
-        Scanner scanner = new Scanner(System.in);
+    /**
+     * Shows the text-based console menu and returns
+     * the report chosen by the user, or null if they exit.
+     *
+     * @param scanner the shared Scanner for user input
+     * @return the selected report, or null if the user exits
+     */
+    public static ReportSelection showReportMenu(Scanner scanner) {
         System.out.println("\n========================================");
         System.out.println("   World Population Reporting System    ");
         System.out.println("========================================\n");
