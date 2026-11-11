@@ -50,4 +50,5 @@ public class App {
             System.out.println("Database connection failed.");
             System.out.println("Error message: " + e.getMessage());
             e.printStackTrace();
-        }}}
+        }
+    }}
