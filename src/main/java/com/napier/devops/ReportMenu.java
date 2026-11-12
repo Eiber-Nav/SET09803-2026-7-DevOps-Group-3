@@ -44,7 +44,14 @@ public class ReportMenu {
             "22. Top N populated capital cities in a region",
             "23. Population breakdown by continent",
             "24. Population breakdown by region",
-            "25. Population breakdown by country"
+            "25. Population breakdown by country",
+            "26. Total world population",
+            "27. Population of a continent",
+            "28. Population of a region",
+            "29. Population of a country",
+            "30. Population of a district",
+            "31. Population of a city",
+            "32. Language report: Chinese, English, Hindi, Spanish, Arabic"
     };
 
     /**
