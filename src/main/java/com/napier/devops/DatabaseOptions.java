@@ -107,6 +107,24 @@ public class DatabaseOptions {
         return countryCodes.get(selectedIndex);
     }
 
+    public static String selectCities(String dbUrl, String dbUser,
+                                        String dbPassword, Scanner scanner)
+            throws SQLException {
+
+        /*
+         * Retrieve the district names from the city table.
+         * DISTINCT prevents duplicate district names from
+         * appearing in the selection menu.
+         */
+        String sqlQuery = "SELECT DISTINCT Name FROM city " +
+                "WHERE Name IS NOT NULL AND Name <> '' " +
+                "ORDER BY Name";
+
+        return selectOption(dbUrl, dbUser, dbPassword,
+                scanner, sqlQuery, "Name");
+    }
+
+
 
     /**
      * Displays the districts available in the database.
