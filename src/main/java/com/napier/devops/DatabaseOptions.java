@@ -155,6 +155,22 @@ public class DatabaseOptions {
 
 
     /**
+     * Displays the districts recorded for the selected country.
+     */
+    public static String selectDistrict(String dbUrl, String dbUser,
+                                        String dbPassword, Scanner scanner,
+                                        String countryCode) throws SQLException {
+        String sqlQuery = """
+                SELECT DISTINCT District FROM city
+                WHERE CountryCode = ? AND District <> ''
+                ORDER BY District
+                """;
+
+        return selectOption(dbUrl, dbUser, dbPassword,
+                scanner, sqlQuery, "district", countryCode);
+    }
+
+    /**
      * Displays a numbered list of options and allows the user
      * to select one. This method handles the menu and input.
      *
@@ -234,12 +250,13 @@ public class DatabaseOptions {
      * @param scanner the shared Scanner for user input
      * @param sqlQuery the SQL query used to retrieve options
      * @param optionName the name of the filter being selected
+     * @param filters parameters for the SQL query
      * @return the selected option, or null if cancelled
      * @throws SQLException if the database query fails
      */
     private static String selectOption(String dbUrl, String dbUser,
                                        String dbPassword, Scanner scanner,
-                                       String sqlQuery, String optionName)
+                                       String sqlQuery, String optionName, String... filters)
             throws SQLException {
 
         List<String> options = new ArrayList<>();
@@ -251,16 +268,18 @@ public class DatabaseOptions {
          */
         try (Connection conn = DriverManager.getConnection(
                 dbUrl, dbUser, dbPassword);
-             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
-             ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
 
-            while (rs.next()) {
+            for (int i = 0; i < filters.length; i++) {
+                stmt.setString(i + 1, filters[i]);
+            }
 
-                String value = rs.getString(1);
-
-                // Skip empty or missing values
-                if (value != null && !value.isBlank()) {
-                    options.add(value);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String value = rs.getString(1);
+                    if (value != null && !value.isBlank()) {
+                        options.add(value);
+                    }
                 }
             }
         }

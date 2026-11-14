@@ -141,30 +141,22 @@ public class ReportServiceDev {
                 report24(dbUrl, dbUser, dbPassword);
                 break;
 
-//            case 25:
-//                report25(dbUrl, dbUser, dbPassword, scanner);
-//                break;
-//
-//            case 26:
-//                report26(dbUrl, dbUser, dbPassword);
-//                break;
-//
-//            case 27:
-//                report27(dbUrl, dbUser, dbPassword, scanner);
-//                break;
-//
-//            case 28:
-//                report28(dbUrl, dbUser, dbPassword, scanner);
-//                break;
-//
-//            case 29:
-//                report29(dbUrl, dbUser, dbPassword, scanner);
-//                break;
-//
-//            case 30:
-//                report30(dbUrl, dbUser, dbPassword, scanner);
-//                break;
-//
+            case 25:
+                report25(dbUrl, dbUser, dbPassword);
+                break;
+
+            case 26:
+                printPopulation(dbUrl, dbUser, dbPassword,
+                        "SELECT 'World' AS Name, SUM(Population) AS Population FROM country");
+                break;
+
+            case 27:
+            case 28:
+            case 29:
+            case 30:
+                reportSelectedPopulation(reportNumber, dbUrl, dbUser, dbPassword, scanner);
+                break;
+
 //            case 31:
 //                report31(dbUrl, dbUser, dbPassword, scanner);
 //                break;
@@ -2480,6 +2472,147 @@ public class ReportServiceDev {
 
 
 
+
+    /**
+     * Displays total, recorded city, and non-city population for each country.
+     */
+    private static void report25(String dbUrl, String dbUser, String dbPassword) {
+        String sql = """
+                SELECT co.Name, co.Population AS TotalPopulation,
+                       COALESCE(cities.Population, 0) AS CityPopulation
+                FROM country co
+                LEFT JOIN (
+                    SELECT CountryCode, SUM(Population) AS Population
+                    FROM city
+                    GROUP BY CountryCode
+                ) cities ON cities.CountryCode = co.Code
+                ORDER BY co.Name, co.Code
+                """;
+
+        System.out.println("\nReport 25 - Population breakdown by country");
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (!rs.next()) {
+                System.out.println("No data available.");
+                return;
+            }
+
+            System.out.printf("%-52s %17s %17s %9s %20s %12s%n",
+                    "Country", "Total population", "City population", "City %",
+                    "Non-city population", "Non-city %");
+
+            do {
+                String country = rs.getString("Name");
+                long total = rs.getLong("TotalPopulation");
+                long city = rs.getLong("CityPopulation");
+
+                if (city > total) {
+                    System.out.printf("%-52s %,17d %,17d %9s %20s %12s  [City population exceeds total]%n",
+                            country, total, city, "N/A", "N/A", "N/A");
+                    continue;
+                }
+
+                long nonCity = total - city;
+                System.out.printf("%-52s %,17d %,17d %9s %,20d %12s%n",
+                        country, total, city, populationPercentage(city, total),
+                        nonCity, populationPercentage(nonCity, total));
+            } while (rs.next());
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+        }
+    }
+
+    private static String populationPercentage(long population, long total) {
+        return total == 0 ? "N/A" : String.format("%.2f%%", 100.0 * population / total);
+    }
+
+    /**
+     * Runs reports 27–30 using the existing geographical selection menus.
+     */
+    private static void reportSelectedPopulation(int reportNumber, String dbUrl,
+                                                 String dbUser, String dbPassword,
+                                                 Scanner scanner) {
+        try {
+            switch (reportNumber) {
+                case 27 -> {
+                    String continent = DatabaseOptions.selectContinent(dbUrl, dbUser, dbPassword, scanner);
+                    if (continent != null) {
+                        printPopulation(dbUrl, dbUser, dbPassword, """
+                                SELECT Continent AS Name, SUM(Population) AS Population
+                                FROM country WHERE Continent = ? GROUP BY Continent
+                                """, continent);
+                    }
+                }
+                case 28 -> {
+                    String region = DatabaseOptions.selectRegion(dbUrl, dbUser, dbPassword, scanner);
+                    if (region != null) {
+                        printPopulation(dbUrl, dbUser, dbPassword, """
+                                SELECT Region AS Name, SUM(Population) AS Population
+                                FROM country WHERE Region = ? GROUP BY Region
+                                """, region);
+                    }
+                }
+                case 29 -> {
+                    String countryCode = DatabaseOptions.selectCountry(dbUrl, dbUser, dbPassword, scanner);
+                    if (countryCode != null) {
+                        printPopulation(dbUrl, dbUser, dbPassword,
+                                "SELECT Name, Population FROM country WHERE Code = ?", countryCode);
+                    }
+                }
+                case 30 -> {
+                    String countryCode = DatabaseOptions.selectCountry(dbUrl, dbUser, dbPassword, scanner);
+                    if (countryCode == null) {
+                        return;
+                    }
+
+                    String district = DatabaseOptions.selectDistrict(
+                            dbUrl, dbUser, dbPassword, scanner, countryCode);
+                    if (district != null) {
+                        printPopulation(dbUrl, dbUser, dbPassword, """
+                                SELECT CONCAT(ci.District, ', ', co.Name) AS Name,
+                                       SUM(ci.Population) AS Population
+                                FROM city ci
+                                JOIN country co ON co.Code = ci.CountryCode
+                                WHERE ci.CountryCode = ? AND ci.District = ?
+                                GROUP BY ci.District, co.Name
+                                """, countryCode, district);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Unable to load selection options: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Displays the named population returned by a population lookup.
+     */
+    private static void printPopulation(String dbUrl, String dbUser, String dbPassword,
+                                        String sql, String... filters) {
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < filters.length; i++) {
+                stmt.setString(i + 1, filters[i]);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    long population = rs.getLong("Population");
+                    if (!rs.wasNull()) {
+                        System.out.printf("%n%s population: %,d%n", rs.getString("Name"), population);
+                        return;
+                    }
+                }
+
+                System.out.println("No data available.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+        }
+    }
 
     public static String readSqlFile(String filePath) throws IOException {
 
