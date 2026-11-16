@@ -23,7 +23,7 @@
 <text x="1420" y="582" text-anchor="middle" class="small">Supporting actor</text>
 <circle cx="170" cy="475" r="25" fill="white" stroke="#172b4d" stroke-width="3"/>
 <path d="M170 500 V575 M130 530 H210 M170 575 L135 630 M170 575 L205 630" fill="none" stroke="#172b4d" stroke-width="3"/>
-<text x="170" y="670" text-anchor="middle" class="label">Organisation User</text>
+<text x="170" y="670" text-anchor="middle" class="label">Demographic Analyst</text>
 <ellipse cx="790" cy="240" rx="335" ry="53" fill="white" stroke="#245fa6" stroke-width="2"/>
 <text x="790" y="223" text-anchor="middle" class="label">View country reports</text>
 <text x="790" y="247" text-anchor="middle" class="detail">UC01–UC06 · All / top N</text>
