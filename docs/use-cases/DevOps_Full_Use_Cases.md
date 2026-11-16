@@ -6,7 +6,7 @@ Use-case documentation contribution: Thaddeus Cornish Jr. · GitHub issues #17 a
 
 ## Scope and actors
 
-The system provides read-only population reports from the supplied World SQL database. **Organisation User** is the primary actor for all 32 use cases. The system boundary covers only the reporting application. **World SQL Database** is an external supporting actor that provides the supplied population data for all 32 use cases. The database does not initiate reports or make user selections. Login, administration, exporting, and changing population records are outside the supplied brief.
+The system provides read-only population reports from the supplied World SQL database. **Demographic Analyst** is the primary actor for all 32 use cases. The system boundary covers only the reporting application. **World SQL Database** is an external supporting actor that provides the supplied population data for all 32 use cases. The database does not initiate reports or make user selections. Login, administration, exporting, and changing population records are outside the supplied brief.
 
 The application’s input mechanism is not fixed here: “request” and “select” can be implemented through command-line arguments, a menu, or another interface agreed by the team. The existing top-three-country demonstration is an initial implementation example, not evidence that the complete requirements are met.
 
@@ -15,7 +15,7 @@ The application’s input mechanism is not fixed here: “request” and “sele
 These conditions apply to every use case below and form part of each full definition.
 
 - **Preconditions:** the application is running; the supplied World dataset is loaded; database access is configured and available.
-- **Trigger:** the Organisation User requests the named report or lookup.
+- **Trigger:** the Demographic Analyst requests the named report or lookup.
 - **Success postcondition:** the requested report or lookup is presented; source data is unchanged.
 - **Failure postcondition:** no successful result is claimed; source data is unchanged.
 - **Database/query failure:** show a clear failure message and allow a retry or return to the application’s available choices. Do not present a partially retrieved report as complete.
@@ -80,7 +80,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R01 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -109,7 +109,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R02 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -140,7 +140,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R03 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -171,7 +171,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R04 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -204,7 +204,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R05 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -238,7 +238,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R06 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -272,7 +272,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R07 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -300,7 +300,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R08 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -330,7 +330,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R09 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -360,7 +360,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R10 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -390,7 +390,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R11 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -420,7 +420,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R12 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -452,7 +452,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R13 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -485,7 +485,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R14 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -518,7 +518,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R15 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -551,7 +551,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R16 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -584,7 +584,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R17 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -613,7 +613,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R18 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -644,7 +644,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R19 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -675,7 +675,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R20 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -708,7 +708,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R21 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -742,7 +742,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R22 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -776,7 +776,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R23 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -809,7 +809,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R24 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -842,183 +842,195 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R25 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
-**Goal:** Compare total population and recorded city/non-city population across every country.
+**Goal:** Compare total population and recorded city and non-city population across all countries.
 
-**Inputs:** No individual geographical selection is required; user chooses the report level.
+**Inputs:** The analyst selects report 25 from the main menu. The report requires no additional input.
 
-**Preconditions, trigger and postconditions:** the shared conditions above apply.
+**Preconditions, trigger and postconditions:** The shared conditions above apply.
 
 **Main success flow:**
 
-1. User requests the population breakdown for each country.
-2. System groups country population totals by country.
-3. System separately aggregates city population totals by the same country, then combines the aggregates without multiplying country totals through a city join.
-4. System calculates non-city population as total population minus recorded city population.
-5. System calculates city and non-city percentages using the group’s total population.
-6. System displays one row per country with its name, total population, city population and percentage, and non-city population and percentage.
+1. The analyst selects report 25 from the main menu.
+2. The system retrieves each country's recorded total population.
+3. The system sums recorded city populations by country code before joining them to the country records. This keeps the output to one row per country.
+4. The system subtracts the recorded city population from the country total to calculate the non-city population.
+5. The system calculates the city and non-city percentages using the country total.
+6. The system displays one row per country, ordered by country name.
 
 **Alternative and exception flows:**
 
-- A group has no recorded cities: use zero for its recorded city population.
-- Total population is zero: show percentages as N/A rather than divide by zero.
-- Recorded city population exceeds total population: flag the inconsistency; do not silently clamp or present negative non-city population as valid.
-- No data is available: show an explicit empty-result message.
-- Database/query failure or missing required data: follow the shared error handling above.
+- If a country has no recorded cities, the system uses zero for its city population.
+- If a country's total and recorded city populations are both zero, the system displays `N/A` for both percentages.
+- If the recorded city population exceeds the country total, the system displays both recorded figures, flags the inconsistency, and shows `N/A` for the city percentage, non-city population, and non-city percentage.
+- If there are no country records, the system displays “No data available.”
+- If the database query fails, the system follows the shared error handling above.
 
-**Required output:** Name; Total Population; City Population; City %; Non-city Population; Non-city %.
+**Required output:** Country name, total population, city population, city percentage, non-city population, and non-city percentage.
 
 ### UC26 — Look up population of the world
 
 **Requirement:** R26 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
-**Goal:** Retrieve the total world population recorded in the supplied database.
+**Goal:** Retrieve the total world population recorded in the supplied `world.sql` dataset.
 
-**Inputs:** None; no geographical selection is required.
+**Inputs:** The analyst selects report 26 from the main menu. The report requires no additional input.
 
-**Preconditions, trigger and postconditions:** the shared conditions above apply.
+**Preconditions, trigger and postconditions:** The shared conditions above apply.
 
 **Main success flow:**
 
-1. User requests the world population lookup.
-2. System retrieves the relevant records. Sum population across all countries.
-3. System displays “World” and its total population.
+1. The analyst selects report 26 from the main menu.
+2. The system sums the population values across all country records in the supplied dataset.
+3. The system displays “World” and the resulting population total.
 
 **Alternative and exception flows:**
 
-- No matching records: show “No data available”; distinguish missing data from a recorded population of zero.
-- Database/query failure or missing required data: follow the shared error handling above.
+- If the query returns no population value, the system displays “No data available.” A recorded total of zero is displayed as `0`.
+- If the database query fails, the system follows the shared error handling above.
 
-**Required output:** Geographical name and population.
+**Required output:** World population total.
 
 ### UC27 — Look up population of a continent
 
 **Requirement:** R27 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
-**Goal:** Retrieve the population for the requested continent.
+**Goal:** Retrieve the population recorded for the selected continent.
 
-**Inputs:** A valid, unambiguous continent identifier or selection.
+**Inputs:** A continent selected from the numbered list.
 
-**Preconditions, trigger and postconditions:** the shared conditions above apply.
+**Preconditions, trigger and postconditions:** The shared conditions above apply.
 
 **Main success flow:**
 
-1. User requests the continent population lookup.
-2. System obtains and validates any geographical selection.
-3. System retrieves the relevant records. Sum country populations in the selected scope.
-4. System displays the selected geographical name and population.
+1. The analyst selects report 27 from the main menu.
+2. The system displays a numbered list of continents from the database.
+3. The analyst enters the number for a continent.
+4. The system sums the recorded populations of countries in that continent.
+5. The system displays the continent name and population total.
 
 **Alternative and exception flows:**
 
-- Unknown or ambiguous geographical selection: request clarification before returning a population.
-- No matching records: show “No data available”; distinguish missing data from a recorded population of zero.
-- Database/query failure or missing required data: follow the shared error handling above.
+- If the analyst enters `0`, the system cancels the selection.
+- If the input is non-numeric or outside the displayed range, the system shows an error and prompts again.
+- If no continent options are available, the system reports that no options were found.
+- If the population query returns no value, the system displays “No data available.” A recorded population of zero is displayed as `0`.
+- If a database query fails, the system follows the shared error handling above.
 
-**Required output:** Geographical name and population.
+**Required output:** Continent name and population total.
 
 ### UC28 — Look up population of a region
 
 **Requirement:** R28 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
-**Goal:** Retrieve the population for the requested region.
+**Goal:** Retrieve the population recorded for the selected region.
 
-**Inputs:** A valid, unambiguous region identifier or selection.
+**Inputs:** A region selected from the numbered list.
 
-**Preconditions, trigger and postconditions:** the shared conditions above apply.
+**Preconditions, trigger and postconditions:** The shared conditions above apply.
 
 **Main success flow:**
 
-1. User requests the region population lookup.
-2. System obtains and validates any geographical selection.
-3. System retrieves the relevant records. Sum country populations in the selected scope.
-4. System displays the selected geographical name and population.
+1. The analyst selects report 28 from the main menu.
+2. The system displays a numbered list of regions from the database.
+3. The analyst enters the number for a region.
+4. The system sums the recorded populations of countries in that region.
+5. The system displays the region name and population total.
 
 **Alternative and exception flows:**
 
-- Unknown or ambiguous geographical selection: request clarification before returning a population.
-- No matching records: show “No data available”; distinguish missing data from a recorded population of zero.
-- Database/query failure or missing required data: follow the shared error handling above.
+- If the analyst enters `0`, the system cancels the selection.
+- If the input is non-numeric or outside the displayed range, the system shows an error and prompts again.
+- If no region options are available, the system reports that no options were found.
+- If the population query returns no value, the system displays “No data available.” A recorded population of zero is displayed as `0`.
+- If a database query fails, the system follows the shared error handling above.
 
-**Required output:** Geographical name and population.
+**Required output:** Region name and population total.
 
 ### UC29 — Look up population of a country
 
 **Requirement:** R29 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
-**Goal:** Retrieve the population for the requested country.
+**Goal:** Retrieve the population recorded for the selected country.
 
-**Inputs:** A valid, unambiguous country identifier or selection.
+**Inputs:** A country selected from the numbered list.
 
-**Preconditions, trigger and postconditions:** the shared conditions above apply.
+**Preconditions, trigger and postconditions:** The shared conditions above apply.
 
 **Main success flow:**
 
-1. User requests the country population lookup.
-2. System obtains and validates any geographical selection.
-3. System retrieves the relevant records. Read the selected country’s population.
-4. System displays the selected geographical name and population.
+1. The analyst selects report 29 from the main menu.
+2. The system displays a numbered list of country names from the database.
+3. The analyst enters the number for a country.
+4. The system uses the corresponding country code to retrieve its population.
+5. The system displays the country name and recorded population.
 
 **Alternative and exception flows:**
 
-- Unknown or ambiguous geographical selection: request clarification before returning a population.
-- No matching records: show “No data available”; distinguish missing data from a recorded population of zero.
-- Database/query failure or missing required data: follow the shared error handling above.
+- If the analyst enters `0`, the system cancels the selection.
+- If the input is non-numeric or outside the displayed range, the system shows an error and prompts again.
+- If no country options are available, the system reports that no options were found.
+- If the population query returns no value, the system displays “No data available.” A recorded population of zero is displayed as `0`.
+- If a database query fails, the system follows the shared error handling above.
 
-**Required output:** Geographical name and population.
+**Required output:** Country name and recorded population.
 
 ### UC30 — Look up population of a district
 
 **Requirement:** R30 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
-**Goal:** Retrieve the population for the requested district.
+**Goal:** Retrieve the population of the selected district by summing its recorded city populations.
 
-**Inputs:** A valid, unambiguous district identifier or selection. Include the country when needed to distinguish repeated district names.
+**Inputs:** A country selected from the numbered country list, followed by a district selected from that country's numbered district list.
 
-**Preconditions, trigger and postconditions:** the shared conditions above apply.
+**Preconditions, trigger and postconditions:** The shared conditions above apply.
 
 **Main success flow:**
 
-1. User requests the district population lookup.
-2. System obtains and validates any geographical selection.
-3. System retrieves the relevant records. Sum recorded city populations in the selected district.
-4. System displays the selected geographical name and population.
+1. The analyst selects report 30 from the main menu.
+2. The system displays a numbered list of countries, and the analyst selects one.
+3. The system displays only the named districts recorded for that country, and the analyst selects one.
+4. The system filters city records by both country code and district name, then sums their recorded populations. This keeps districts with the same name in different countries separate.
+5. The system displays the district name, country name, and resulting population total.
 
 **Alternative and exception flows:**
 
-- Unknown or ambiguous geographical selection: request clarification before returning a population.
-- No matching records: show “No data available”; distinguish missing data from a recorded population of zero.
-- Database/query failure or missing required data: follow the shared error handling above.
+- If the analyst enters `0` at either selection menu, the system cancels the report.
+- If the input is non-numeric or outside the displayed range, the system shows an error and repeats the current prompt.
+- If no country or district options are available at the relevant step, the system reports that no options were found.
+- If the population query returns no value, the system displays “No data available.” A recorded population of zero is displayed as `0`.
+- If a database query fails, the system follows the shared error handling above.
 
-**Required output:** Geographical name and population.
+**Required output:** District name, country name, and the sum of recorded city populations in the district.
 
 ### UC31 — Look up population of a city
 
 **Requirement:** R31 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -1047,7 +1059,7 @@ R01–R32 and UC01–UC32 are local reference labels added for this documentatio
 
 **Requirement:** R32 (the corresponding item in the coursework specification).
 
-**Primary actor:** Organisation User.
+**Primary actor:** Demographic Analyst.
 
 **Supporting actor:** World SQL Database (provides the data queried by the application).
 
@@ -1085,7 +1097,7 @@ Required output: Language; Estimated Speakers; World Population %.
 | Look up population            | UC26–UC31          | World; selected continent, region, country, district, city |
 | View language-speaker report  | UC32               | Chinese, English, Hindi, Spanish, Arabic                   |
 
-The companion SVG is an editable vector diagram. Organisation User and World SQL Database are outside the reporting application boundary and are associated with all six report families. Its solid lines are actor-to-use-case associations, not data flow arrows. No include or extend relationship is asserted.
+The companion SVG is an editable vector diagram. Demographic Analyst and World SQL Database are outside the reporting application boundary and are associated with all six report families. Its solid lines are actor-to-use-case associations, not data flow arrows. No include or extend relationship is asserted.
 
 ## Backlog alignment and team review
 
