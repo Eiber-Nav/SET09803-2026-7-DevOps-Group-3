@@ -71,7 +71,7 @@ public class ReportMenu {
             System.out.println(report);
         }
         System.out.println("0. Exit Application");
-        System.out.print("\nEnter your choice (0-25): ");
+        System.out.print("\nEnter your choice (0-" + REPORTS.length + "): ");
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
             if (choice == 0) {
