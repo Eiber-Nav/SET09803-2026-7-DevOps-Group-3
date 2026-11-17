@@ -122,8 +122,8 @@ public class ReportServiceDev {
             case 17: report17(dbUrl, dbUser, dbPassword);
                      break;
 
-            case 18: report18(dbUrl, dbUser, dbPassword);
-                     break;
+            case 18: report18(dbUrl, dbUser, dbPassword, scanner);
+                break;
             case 19: report19(dbUrl, dbUser, dbPassword,scanner);
                 break;
             case 20: report20(dbUrl, dbUser, dbPassword,scanner);
@@ -1896,74 +1896,119 @@ public class ReportServiceDev {
         }
     }
 
-    public static void report18(String dbUrl, String dbUser, String dbPassword) {
+    /**
+     * Report 18 - Displays all capital cities in a selected continent.
+     * Capital cities are sorted from largest population to smallest.
+     *
+     * @param dbUrl the database connection URL
+     * @param dbUser the database username
+     * @param dbPassword the database password
+     * @param scanner the shared Scanner for user input
+     */
+    public static void report18(String dbUrl, String dbUser,
+                                String dbPassword, Scanner scanner) {
 
         System.out.println("\n----------------------------------------");
-        System.out.println("Report 18 - All capital cities in a continent(Europe) by population");
-        System.out.println("---------------------------------------------------------\n");
+        System.out.println("Report 18 - All Capital Cities in a Continent");
+        System.out.println("----------------------------------------\n");
+
+        String continent;
+
+        // Allow the user to select a continent from the database
+        try {
+            continent = DatabaseOptions.selectContinent(
+                    dbUrl, dbUser, dbPassword, scanner);
+
+        } catch (SQLException e) {
+            System.err.println("Unable to load continents: " + e.getMessage());
+            return;
+        }
+
+        // Return to the menu if the user cancels
+        if (continent == null) {
+            System.out.println("Report cancelled.");
+            return;
+        }
 
         /*
-         * Retrieve the required country information.
-         * ORDER BY Population DESC places countries with
-         * the largest population at the top of the report.
+         * Join the country and city tables to find each capital.
+         * Filter by the selected continent and sort by population.
          */
-        String sqlQuery = "SELECT city.Name AS CapitalCity, country.Name AS Country, country.Continent, city.Population FROM country JOIN city ON country.Capital = city.ID WHERE country.Continent = 'Europe' -- Replace 'Europe' with your desired continent ORDER BY city.Population DESC;";
+        String sqlQuery = "SELECT city.Name AS CapitalCity, " +
+                "country.Name AS CountryName, city.Population " +
+                "FROM country " +
+                "JOIN city ON country.Capital = city.ID " +
+                "WHERE country.Continent = ? " +
+                "ORDER BY city.Population DESC;";
 
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DriverManager.getConnection(
+                dbUrl, dbUser, dbPassword);
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
 
-            // Print the column headings
-            System.out.printf("%-45s %-45s  %-15s%n",
-                    "Capital City", "Country","Population"
-            );
+            // Set the continent selected by the user
+            stmt.setString(1, continent);
 
-            System.out.println("-------------------------------------------" +
-                    "------------------------------------------------" +
-                    "-----------------");
+            try (ResultSet rs = stmt.executeQuery()) {
 
-            int rowCount = 0;
+                System.out.printf("%-40s %-45s %-15s%n",
+                        "Capital City", "Country", "Population");
 
-            // Display each country returned from the database
-            while (rs.next()) {
-                String capital = rs.getString("CapitalCity");
-                String country = rs.getString("Country");
-                long population = rs.getLong("Population");
+                System.out.println("----------------------------------------" +
+                        "----------------------------------------" +
+                        "--------------------");
 
+                int rowCount = 0;
 
+                // Display the capital cities returned by the query
+                while (rs.next()) {
 
+                    String capitalCity = rs.getString("CapitalCity");
+                    String countryName = rs.getString("CountryName");
+                    long population = rs.getLong("Population");
 
-                // Display the results using aligned columns
-                System.out.printf("%-45s %-45s %-15s%n",
-                        capital,country,population);
+                    System.out.printf("%-40s %-45s %-15d%n",
+                            capitalCity, countryName, population);
 
-                rowCount++;
+                    rowCount++;
+                }
+
+                if (rowCount == 0) {
+                    System.out.println("No capital cities found.");
+                }
+
+                System.out.println("\nSelected continent: " + continent);
+                System.out.println("Total capital cities displayed: " + rowCount);
             }
-
-            System.out.println("\nQuery executed successfully against 'world' database.");
-            System.out.println("Total countries found: " + rowCount);
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
     }
-
+    /**
+     * Report 19 - Displays all capital cities in a selected region.
+     * Capital cities are sorted from largest population to smallest.
+     *
+     * @param dbUrl the database connection URL
+     * @param dbUser the database username
+     * @param dbPassword the database password
+     * @param scanner the shared Scanner for user input
+     */
     public static void report19(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
 
         System.out.println("\n----------------------------------------");
-        System.out.println("Report 19 - All Cities in a District");
+        System.out.println("Report 19 - All Capital Cities in a Region");
         System.out.println("----------------------------------------\n");
 
         String region;
 
-        // Allow the user to select a district from the database
+        // Allow the user to select a region from the database
         try {
             region = DatabaseOptions.selectRegion(
                     dbUrl, dbUser, dbPassword, scanner);
 
         } catch (SQLException e) {
-            System.err.println("Unable to load region: " + e.getMessage());
+            System.err.println("Unable to load regions: " + e.getMessage());
             return;
         }
 
@@ -1974,56 +2019,56 @@ public class ReportServiceDev {
         }
 
         /*
-         * Retrieve cities belonging to the selected district.
-         * Join the country table to show the country name
-         * and sort the results by population.
+         * Join the country and city tables to find each capital.
+         * Filter by the selected region and sort by population.
          */
-        String sqlQuery = "SELECT city.Name AS CityName, " +
-                "country.Name AS Country, " +
-                "country.Region, " +
-                "city.Population FROM country " +
+        String sqlQuery = "SELECT city.Name AS CapitalCity, " +
+                "country.Name AS CountryName, " +
+                "city.Population " +
+                "FROM country " +
                 "JOIN city ON country.Capital = city.ID " +
-                "WHERE country.Region = ?";
-
+                "WHERE country.Region = ? " +
+                "ORDER BY city.Population DESC;";
 
         try (Connection conn = DriverManager.getConnection(
                 dbUrl, dbUser, dbPassword);
              PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
 
-            // Set the district selected by the user
+            // Set the region selected by the user
             stmt.setString(1, region);
 
             try (ResultSet rs = stmt.executeQuery()) {
 
-                System.out.printf("%-35s %-40s %-30s %-15s%n",
-                        "City", "Country", "Region", "Population");
+                // Display the report column headings
+                System.out.printf("%-40s %-45s %-15s%n",
+                        "Capital City", "Country", "Population");
 
-                System.out.println("------------------------------------------------" +
-                        "------------------------------------------------" +
+                System.out.println("----------------------------------------" +
+                        "----------------------------------------" +
                         "--------------------");
 
                 int rowCount = 0;
 
-                // Display the cities returned for the selected district
+                // Display each capital city returned by the query
                 while (rs.next()) {
 
-                    String cityName = rs.getString("CityName");
-                    String countryName = rs.getString("Country");
-                    String cityDistrict = rs.getString("Region");
+                    String capitalCity = rs.getString("CapitalCity");
+                    String countryName = rs.getString("CountryName");
                     long population = rs.getLong("Population");
 
-                    System.out.printf("%-35s %-40s %-30s %-15d%n",
-                            cityName, countryName, cityDistrict, population);
+                    System.out.printf("%-40s %-45s %-15d%n",
+                            capitalCity, countryName, population);
 
                     rowCount++;
                 }
 
+                // Display a message if no capital cities were found
                 if (rowCount == 0) {
-                    System.out.println("No cities found for the selected district.");
+                    System.out.println("No capital cities found for this region.");
                 }
 
                 System.out.println("\nSelected region: " + region);
-                System.out.println("Total cities displayed: " + rowCount);
+                System.out.println("Total capital cities displayed: " + rowCount);
             }
 
         } catch (SQLException e) {
@@ -2365,53 +2410,100 @@ public class ReportServiceDev {
      * @param dbUser the database username
      * @param dbPassword the database password
      */
+
+    /**
+     * Report 23 - Displays the population breakdown for each continent.
+     * Shows the total population, population living in cities,
+     * population outside cities and their percentages.
+     *
+     * @param dbUrl the database connection URL
+     * @param dbUser the database username
+     * @param dbPassword the database password
+     */
     public static void report23(String dbUrl, String dbUser, String dbPassword) {
 
         System.out.println("\n--------------------------------------------");
         System.out.println("Report 23 - Population Breakdown by Continent");
-        System.out.println("----------------------------------------------\n");
+        System.out.println("--------------------------------------------\n");
 
-        // Calculate the total population and percentage for each continent
-        String sqlQuery = "SELECT Continent, " +
-                "SUM(Population) AS TotalPopulation, " +
-                "ROUND(SUM(Population) * 100.0 / " +
-                "(SELECT SUM(Population) FROM country), 2) AS PopulationPercentage " +
-                "FROM country " +
-                "GROUP BY Continent " +
-                "ORDER BY TotalPopulation DESC;";
+        /*
+         * Get the total population of each continent from country.
+         * Calculate city populations separately before joining,
+         * so country populations are not counted more than once.
+         */
+        String sqlQuery =
+                "SELECT co.Continent, " +
+                        "SUM(co.Population) AS TotalPopulation, " +
+                        "COALESCE(SUM(cp.CityPopulation), 0) AS CityPopulation " +
+                        "FROM country co " +
+                        "LEFT JOIN ( " +
+                        "    SELECT CountryCode, SUM(Population) AS CityPopulation " +
+                        "    FROM city " +
+                        "    GROUP BY CountryCode " +
+                        ") cp ON co.Code = cp.CountryCode " +
+                        "GROUP BY co.Continent " +
+                        "ORDER BY TotalPopulation DESC;";
 
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sqlQuery)) {
+        try (Connection conn = DriverManager.getConnection(
+                dbUrl, dbUser, dbPassword);
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+             ResultSet rs = stmt.executeQuery()) {
 
             // Display the report headings
-            System.out.printf("%-25s %-35s %-20s%n",
-                    "Continent", "Total Population", "World Population %");
+            System.out.printf("%-18s %18s %18s %12s %18s %12s%n",
+                    "Continent", "Total Population", "In Cities",
+                    "In Cities %", "Not in Cities", "Not in %");
 
-            System.out.println("------------------------------------------------------------------------------------");
+            System.out.println("-".repeat(105));
 
             int rowCount = 0;
 
-            // Display each continent's population information
+            // Display the population information for each continent
             while (rs.next()) {
 
                 String continent = rs.getString("Continent");
-                long population = rs.getLong("TotalPopulation");
-                double percentage = rs.getDouble("PopulationPercentage");
+                long totalPopulation = rs.getLong("TotalPopulation");
+                long cityPopulation = rs.getLong("CityPopulation");
 
-                System.out.printf("%-25s %,25d %19.2f%%%n",
-                        continent, population, percentage);
+                // Calculate the population outside the recorded cities
+                long outsideCities = totalPopulation - cityPopulation;
+
+                double cityPercentage = 0;
+                double outsidePercentage = 0;
+
+                // Avoid dividing by zero
+                if (totalPopulation > 0) {
+                    cityPercentage =
+                            (cityPopulation * 100.0) / totalPopulation;
+
+                    outsidePercentage =
+                            (outsideCities * 100.0) / totalPopulation;
+                }
+
+                System.out.printf(
+                        "%-18s %,18d %,18d %11.2f%% %,18d %11.2f%%%n",
+                        continent,
+                        totalPopulation,
+                        cityPopulation,
+                        cityPercentage,
+                        outsideCities,
+                        outsidePercentage
+                );
 
                 rowCount++;
             }
 
-            System.out.println("\nTotal continents found: " + rowCount);
-            System.out.println("Query executed successfully.");
+            if (rowCount == 0) {
+                System.out.println("No population information was found.");
+            }
+
+            System.out.println("\nTotal continents displayed: " + rowCount);
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
     }
+
 
 
     /**
@@ -2421,54 +2513,100 @@ public class ReportServiceDev {
      * @param dbUser the database username
      * @param dbPassword the database password
      */
+
+    /**
+     * Report 24 - Displays the population breakdown for each region.
+     * Shows the total population, population living in cities,
+     * population outside cities and their percentages.
+     *
+     * @param dbUrl the database connection URL
+     * @param dbUser the database username
+     * @param dbPassword the database password
+     */
     public static void report24(String dbUrl, String dbUser, String dbPassword) {
 
-        System.out.println("\n-------------------------------------------");
+        System.out.println("\n--------------------------------------------");
         System.out.println("Report 24 - Population Breakdown by Region");
-        System.out.println("---------------------------------------------\n");
+        System.out.println("--------------------------------------------\n");
 
-        // Calculate the total population and percentage for each region
-        String sqlQuery = "SELECT Continent, Region, " +
-                "SUM(Population) AS TotalPopulation, " +
-                "ROUND(SUM(Population) * 100.0 / " +
-                "(SELECT SUM(Population) FROM country), 2) AS PopulationPercentage " +
-                "FROM country " +
-                "GROUP BY Continent, Region " +
-                "ORDER BY TotalPopulation DESC;";
+        /*
+         * Get the total population of each region from country.
+         * Calculate city populations separately before joining,
+         * so country populations are not counted more than once.
+         */
+        String sqlQuery =
+                "SELECT co.Region, " +
+                        "SUM(co.Population) AS TotalPopulation, " +
+                        "COALESCE(SUM(cp.CityPopulation), 0) AS CityPopulation " +
+                        "FROM country co " +
+                        "LEFT JOIN ( " +
+                        "    SELECT CountryCode, SUM(Population) AS CityPopulation " +
+                        "    FROM city " +
+                        "    GROUP BY CountryCode " +
+                        ") cp ON co.Code = cp.CountryCode " +
+                        "GROUP BY co.Region " +
+                        "ORDER BY TotalPopulation DESC;";
 
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sqlQuery)) {
+        try (Connection conn = DriverManager.getConnection(
+                dbUrl, dbUser, dbPassword);
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+             ResultSet rs = stmt.executeQuery()) {
 
-            // Display the report headings
-            System.out.printf("%-20s %-30s %-25s %-20s%n",
-                    "Continent", "Region", "Total Population", "World Population %");
+            // Display the report column headings
+            System.out.printf("%-30s %18s %18s %12s %18s %12s%n",
+                    "Region", "Total Population", "In Cities",
+                    "In Cities %", "Not in Cities", "Not in %");
 
-            System.out.println("--------------------------------------------------------------------------------------------------");
+            System.out.println("-".repeat(117));
 
             int rowCount = 0;
 
-            // Display each region's population information
+            // Display the population information for each region
             while (rs.next()) {
 
-                String continent = rs.getString("Continent");
                 String region = rs.getString("Region");
-                long population = rs.getLong("TotalPopulation");
-                double percentage = rs.getDouble("PopulationPercentage");
+                long totalPopulation = rs.getLong("TotalPopulation");
+                long cityPopulation = rs.getLong("CityPopulation");
 
-                System.out.printf("%-20s %-30s %,25d %19.2f%%%n",
-                        continent, region, population, percentage);
+                // Calculate the population outside the recorded cities
+                long outsideCities = totalPopulation - cityPopulation;
+
+                double cityPercentage = 0;
+                double outsidePercentage = 0;
+
+                // Avoid dividing by zero
+                if (totalPopulation > 0) {
+                    cityPercentage =
+                            (cityPopulation * 100.0) / totalPopulation;
+
+                    outsidePercentage =
+                            (outsideCities * 100.0) / totalPopulation;
+                }
+
+                System.out.printf(
+                        "%-30s %,18d %,18d %11.2f%% %,18d %11.2f%%%n",
+                        region,
+                        totalPopulation,
+                        cityPopulation,
+                        cityPercentage,
+                        outsideCities,
+                        outsidePercentage
+                );
 
                 rowCount++;
             }
 
-            System.out.println("\nTotal regions found: " + rowCount);
-            System.out.println("Query executed successfully.");
+            if (rowCount == 0) {
+                System.out.println("No population information was found.");
+            }
+
+            System.out.println("\nTotal regions displayed: " + rowCount);
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
     }
+
 
 
 
@@ -2613,6 +2751,7 @@ public class ReportServiceDev {
             System.err.println("Database error: " + e.getMessage());
         }
     }
+
 
     public static String readSqlFile(String filePath) throws IOException {
 
