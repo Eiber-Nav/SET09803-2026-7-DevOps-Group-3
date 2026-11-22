@@ -39,6 +39,7 @@ public class ReportServiceDev {
         String dbUrl = "jdbc:mysql://" + dbHost
                 + ":3306/world?useSSL=false&allowPublicKeyRetrieval=true";
 
+        // Database login details
         String dbUser = "root";
         String dbPassword = System.getenv("DB_PASSWORD");
 
@@ -120,7 +121,7 @@ public class ReportServiceDev {
                 break;
 
             case 17: report17(dbUrl, dbUser, dbPassword);
-                     break;
+                break;
 
             case 18: report18(dbUrl, dbUser, dbPassword, scanner);
                 break;
@@ -157,13 +158,14 @@ public class ReportServiceDev {
                 reportSelectedPopulation(reportNumber, dbUrl, dbUser, dbPassword, scanner);
                 break;
 
-//            case 31:
-//                report31(dbUrl, dbUser, dbPassword, scanner);
-//                break;
-//
-//            case 32:
-//                report32(dbUrl, dbUser, dbPassword);
-//                break;
+            case 31:
+                report31(dbUrl, dbUser, dbPassword, scanner);
+                break;
+
+            case 32:
+                report32(dbUrl, dbUser, dbPassword);
+                break;
+
             default:
                 System.out.println("\n----------------------------------------");
                 System.out.println("Report " + reportNumber + " is still in development.");
@@ -1863,8 +1865,8 @@ public class ReportServiceDev {
 
             // Print the column headings
             System.out.printf("%-45s %-45s  %-15s%n",
-                     "Capital City", "Country", "Population"
-                    );
+                    "Capital City", "Country", "Population"
+            );
 
             System.out.println("-------------------------------------------" +
                     "------------------------------------------------" +
@@ -1883,7 +1885,7 @@ public class ReportServiceDev {
 
                 // Display the results using aligned columns
                 System.out.printf("%-45s %-45s  %-15s%n",
-                         capital,country,population);
+                        capital,country,population);
 
                 rowCount++;
             }
@@ -2077,7 +2079,7 @@ public class ReportServiceDev {
     }
 
     public static void report20(String dbUrl, String dbUser,
-                               String dbPassword, Scanner scanner) {
+                                String dbPassword, Scanner scanner) {
 
         System.out.println("\n----------------------------------------");
         System.out.println("Report 20 - Top N populated capital cities in the world");
@@ -2177,7 +2179,7 @@ public class ReportServiceDev {
     }
 
     public static void report21(String dbUrl, String dbUser,
-                               String dbPassword, Scanner scanner) {
+                                String dbPassword, Scanner scanner) {
 
         System.out.println("\n----------------------------------------");
         System.out.println("Report 21 - op N populated capital cities in a continent");
@@ -2758,4 +2760,299 @@ public class ReportServiceDev {
         // Read the SQL file using UTF-8 encoding
         return Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
     }
+
+    /**
+     * Report 31 - Shows the population of a selected city.
+     *
+     * The user first chooses a country and then selects
+     * a city from that country. The population is retrieved
+     * directly from the world database.
+     */
+    public static void report31(String dbUrl, String dbUser,
+                                String dbPassword, Scanner scanner) {
+
+        System.out.println("\n----------------------------------------");
+        System.out.println("Report 31 - Population of a City");
+        System.out.println("----------------------------------------\n");
+
+        String countryCode;
+
+        // Let the user choose a country from the available options
+        try {
+            countryCode = DatabaseOptions.selectCountry(
+                    dbUrl, dbUser, dbPassword, scanner
+            );
+
+        } catch (SQLException e) {
+            System.err.println("Unable to load countries: " + e.getMessage());
+            return;
+        }
+
+        // Return to the main menu if the user cancels
+        if (countryCode == null) {
+            System.out.println("Report cancelled.");
+            return;
+        }
+
+        /*
+         * Find all cities belonging to the selected country.
+         * Each city has a unique ID, so we use that instead
+         * of the city name to avoid selecting the wrong city.
+         */
+        String cityQuery = "SELECT ID, Name, District " +
+                "FROM city " +
+                "WHERE CountryCode = ? " +
+                "ORDER BY Name, ID";
+
+        try (Connection conn = DriverManager.getConnection(
+                dbUrl, dbUser, dbPassword);
+             PreparedStatement stmt = conn.prepareStatement(cityQuery)) {
+
+            stmt.setString(1, countryCode);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                java.util.List<Integer> cityIds =
+                        new java.util.ArrayList<>();
+
+                System.out.println("Select a city (0 to cancel):");
+
+                // Display the cities available in the selected country
+                while (rs.next()) {
+
+                    cityIds.add(rs.getInt("ID"));
+
+                    System.out.printf("%d. %s (%s)%n",
+                            cityIds.size(),
+                            rs.getString("Name"),
+                            rs.getString("District"));
+                }
+
+                // Stop if the selected country has no cities recorded
+                if (cityIds.isEmpty()) {
+                    System.out.println(
+                            "No cities found for the selected country."
+                    );
+                    return;
+                }
+
+                int selectedCityId;
+
+                /*
+                 * Keep asking until the user enters a valid number.
+                 * Entering zero returns them to the main menu.
+                 */
+                while (true) {
+
+                    System.out.print(
+                            "Enter your choice (0-" + cityIds.size() + "): "
+                    );
+
+                    String answer = scanner.nextLine().trim();
+
+                    try {
+                        int choice = Integer.parseInt(answer);
+
+                        if (choice == 0) {
+                            System.out.println("Report cancelled.");
+                            return;
+                        }
+
+                        if (choice >= 1 && choice <= cityIds.size()) {
+                            selectedCityId = cityIds.get(choice - 1);
+                            break;
+                        }
+
+                    } catch (NumberFormatException e) {
+                        // Invalid numbers are handled by the message below
+                    }
+
+                    System.out.println(
+                            "Please choose a valid number from the list."
+                    );
+                }
+
+                /*
+                 * Get the population of the city that was selected.
+                 * Joining the country table also lets us display
+                 * the full country name instead of its code.
+                 */
+                String populationQuery =
+                        "SELECT ci.Name AS CityName, " +
+                                "co.Name AS CountryName, " +
+                                "ci.District, ci.Population " +
+                                "FROM city ci " +
+                                "JOIN country co ON ci.CountryCode = co.Code " +
+                                "WHERE ci.ID = ?";
+
+                try (PreparedStatement populationStmt =
+                             conn.prepareStatement(populationQuery)) {
+
+                    populationStmt.setInt(1, selectedCityId);
+
+                    try (ResultSet result = populationStmt.executeQuery()) {
+
+                        if (result.next()) {
+
+                            // Display the selected city's population details
+                            System.out.println(
+                                    "\n----------------------------------------"
+                            );
+                            System.out.println("City Population Information");
+                            System.out.println(
+                                    "----------------------------------------"
+                            );
+
+                            System.out.printf("City: %s%n",
+                                    result.getString("CityName"));
+
+                            System.out.printf("Country: %s%n",
+                                    result.getString("CountryName"));
+
+                            System.out.printf("District: %s%n",
+                                    result.getString("District"));
+
+                            System.out.printf("Population: %,d%n",
+                                    result.getLong("Population"));
+
+                        } else {
+                            System.out.println(
+                                    "No population information was found."
+                            );
+                        }
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Report 32 - Displays population information for
+     * Chinese, English, Hindi, Spanish and Arabic.
+     *
+     * The database stores the percentage of each country's
+     * population that speaks a particular language.
+     * We use those percentages to estimate the total number
+     * of speakers and their share of the world population.
+     */
+    public static void report32(String dbUrl, String dbUser,
+                                String dbPassword) {
+
+        System.out.println("\n----------------------------------------");
+        System.out.println("Report 32 - Language Population Report");
+        System.out.println("----------------------------------------\n");
+
+        /*
+         * Calculate the number of speakers for each language.
+         *
+         * Chinese has several entries in the database, so
+         * we group languages containing "Chinese" together.
+         *
+         * The results are sorted from the most spoken
+         * language to the least spoken.
+         */
+        String sqlQuery = """
+                SELECT
+                    CASE
+                        WHEN cl.Language LIKE '%Chinese%'
+                        THEN 'Chinese'
+                        ELSE cl.Language
+                    END AS LanguageName,
+
+                    ROUND(
+                        SUM(
+                            co.Population * cl.Percentage / 100.0
+                        )
+                    ) AS Speakers,
+
+                    ROUND(
+                        100.0 * SUM(
+                            co.Population * cl.Percentage / 100.0
+                        ) / (
+                            SELECT SUM(Population)
+                            FROM country
+                        ),
+                        2
+                    ) AS WorldPercentage
+
+                FROM countrylanguage cl
+
+                JOIN country co
+                    ON cl.CountryCode = co.Code
+
+                WHERE cl.Language LIKE '%Chinese%'
+                   OR cl.Language IN (
+                       'English',
+                       'Hindi',
+                       'Spanish',
+                       'Arabic'
+                   )
+
+                GROUP BY
+                    CASE
+                        WHEN cl.Language LIKE '%Chinese%'
+                        THEN 'Chinese'
+                        ELSE cl.Language
+                    END
+
+                ORDER BY Speakers DESC
+                """;
+
+        // Connect to MySQL and run the language report
+        try (Connection conn = DriverManager.getConnection(
+                dbUrl, dbUser, dbPassword);
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Print the headings for the language report
+            System.out.printf("%-15s %20s %20s%n",
+                    "Language",
+                    "Estimated Speakers",
+                    "World Population %");
+
+            System.out.println(
+                    "------------------------------------------------------------"
+            );
+
+            int rowCount = 0;
+
+            // Display each language and its calculated population
+            while (rs.next()) {
+
+                String language = rs.getString("LanguageName");
+                long speakers = rs.getLong("Speakers");
+                double percentage = rs.getDouble("WorldPercentage");
+
+                System.out.printf("%-15s %,20d %19.2f%%%n",
+                        language,
+                        speakers,
+                        percentage);
+
+                rowCount++;
+            }
+
+            // Let the user know if the query returned no results
+            if (rowCount == 0) {
+                System.out.println(
+                        "No language information was found."
+                );
+            }
+
+            /*
+             * These numbers come from the historical world database.
+             * They are estimates rather than current population figures.
+             */
+            System.out.println(
+                    "\nSpeaker counts are estimates based on the " +
+                            "database's language percentages."
+            );
+
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+        }
+    }
+
 }
