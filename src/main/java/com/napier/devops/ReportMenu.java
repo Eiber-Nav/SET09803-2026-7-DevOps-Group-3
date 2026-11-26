@@ -2,23 +2,42 @@ package com.napier.devops;
 
 import java.util.Scanner;
 
+/**
+ * Displays the available population reports and handles
+ * the user's selection from the main menu.
+ */
 public class ReportMenu {
 
-/*
-* Stores the report number selected by the user.
-*/
+    /**
+     * Stores the report number selected by the user.
+     */
     public static class ReportSelection {
         private final int reportNumber;
+
+        /**
+         * Creates a new report selection.
+         *
+         * @param reportNumber the report chosen by the user
+         */
         public ReportSelection(int reportNumber) {
             this.reportNumber = reportNumber;
         }
+
+        /**
+         * Returns the selected report number.
+         *
+         * @return the selected report number
+         */
         public int getReportNumber() {
             return reportNumber;
-        }}
+        }
+    }
 
-/*
-* These are the reports required for the project.
-*/
+    /*
+     * Contains all 32 reports required for the project.
+     * The report numbers match the selections handled
+     * by ReportServiceDev.
+     */
     private static final String[] REPORTS = {
             "1. All countries in the world by population",
             "2. All countries in a continent by population",
@@ -54,36 +73,69 @@ public class ReportMenu {
             "32. Language report: Chinese, English, Hindi, Spanish, Arabic"
     };
 
+
     /**
      * Shows the text-based console menu and returns
-     * the report chosen by the user, or null if they exit.
+     * the report chosen by the user.
+     * Invalid selections are handled without closing the application.
      *
      * @param scanner the shared Scanner for user input
      * @return the selected report, or null if the user exits
+     * or no further input is available
      */
     public static ReportSelection showReportMenu(Scanner scanner) {
+
         System.out.println("\n========================================");
         System.out.println("   World Population Reporting System    ");
         System.out.println("========================================\n");
 
-// Print all available reports
+        // Print all available reports
         for (String report : REPORTS) {
             System.out.println(report);
         }
+
         System.out.println("0. Exit Application");
-        System.out.print("\nEnter your choice (0-" + REPORTS.length + "): ");
-        try {
-            int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) {
-                return null; // Exit selected
+
+        /*
+         * Keep asking for a selection until the user enters
+         * a valid report number or chooses to exit.
+         */
+        while (true) {
+
+            System.out.print("\nEnter your choice (0-"
+                    + REPORTS.length + "): ");
+
+            // Exit the menu if there is no more input to read
+            if (!scanner.hasNextLine()) {
+                return null;
             }
-            if (choice >= 1 && choice <= REPORTS.length) {
-                return new ReportSelection(choice);
-            } else {
-                System.out.println("Invalid selection. Please choose a number between 0 and " + REPORTS.length + ".");
+
+            String input = scanner.nextLine().trim();
+
+            try {
+                int choice = Integer.parseInt(input);
+
+                // Exit the application when 0 is selected
+                if (choice == 0) {
+                    return null;
+                }
+
+                // Return the selected report if the number is valid
+                if (choice >= 1 && choice <= REPORTS.length) {
+                    return new ReportSelection(choice);
+                }
+
+                // Handle numbers outside the available range
+                System.out.println(
+                        "Invalid selection. Please choose a number between 0 and "
+                                + REPORTS.length + ".");
+
+            } catch (NumberFormatException e) {
+
+                // Handle letters, blank input and other invalid characters
+                System.out.println(
+                        "Invalid input. Please enter a valid whole number.");
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid number.");
         }
-        return null;
-    }}
+    }
+}

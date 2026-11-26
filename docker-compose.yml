@@ -1,17 +1,37 @@
 # SET09803 DevOps Environment Setup
-# Purpose: Orchestrates the MySQL database and Java application services.
+# Runs the MySQL database and Java application together.
+
 services:
-  # MySQL Database Service (Built from the db/ folder with root credentials and pre-configured world database)
+
+  # MySQL database service
   db:
     build: db/.
     environment:
-      MYSQL_ROOT_PASSWORD: D@to0000
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
       MYSQL_DATABASE: world
     ports:
       - "3306:3306"
 
-  # Java Application Service (Builds the app container from the root Dockerfile and ensures db starts first)
+    # Check that the world database is ready before starting Java
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" -D world -e 'SELECT 1 FROM country LIMIT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # Java application service
   app:
     build: .
+    environment:
+      DB_HOST: db
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+
+    # Wait until the database is ready to accept queries
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+    # Allow users to interact with the report menu
+    stdin_open: true
+    tty: true

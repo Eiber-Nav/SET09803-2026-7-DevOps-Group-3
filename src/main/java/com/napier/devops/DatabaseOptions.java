@@ -15,10 +15,10 @@ public class DatabaseOptions {
     /**
      * Displays the continents available in the database.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the scanner used for user input
+     * @param scanner    the scanner used for user input
      * @return the selected continent, or null if cancelled
      * @throws SQLException if the database query fails
      */
@@ -36,10 +36,10 @@ public class DatabaseOptions {
     /**
      * Displays the regions available in the database.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the scanner used for user input
+     * @param scanner    the scanner used for user input
      * @return the selected region, or null if cancelled
      * @throws SQLException if the database query fails
      */
@@ -58,10 +58,10 @@ public class DatabaseOptions {
      * Loads the countries from the database and lets the user
      * choose one from the list.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      * @return the selected country code, or null if cancelled
      * @throws SQLException if the database query fails
      */
@@ -107,55 +107,18 @@ public class DatabaseOptions {
         return countryCodes.get(selectedIndex);
     }
 
-    public static String selectCities(String dbUrl, String dbUser,
-                                        String dbPassword, Scanner scanner)
-            throws SQLException {
-
-        /*
-         * Retrieve the district names from the city table.
-         * DISTINCT prevents duplicate district names from
-         * appearing in the selection menu.
-         */
-        String sqlQuery = "SELECT DISTINCT Name FROM city " +
-                "WHERE Name IS NOT NULL AND Name <> '' " +
-                "ORDER BY Name";
-
-        return selectOption(dbUrl, dbUser, dbPassword,
-                scanner, sqlQuery, "Name");
-    }
-
-
-
-    /**
-     * Displays the districts available in the database.
-     *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
-     * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
-     * @return the selected district, or null if cancelled
-     * @throws SQLException if the database query fails
-     */
-    public static String selectDistrict(String dbUrl, String dbUser,
-                                        String dbPassword, Scanner scanner)
-            throws SQLException {
-
-        /*
-         * Retrieve the district names from the city table.
-         * DISTINCT prevents duplicate district names from
-         * appearing in the selection menu.
-         */
-        String sqlQuery = "SELECT DISTINCT District FROM city " +
-                "WHERE District IS NOT NULL AND District <> '' " +
-                "ORDER BY District";
-
-        return selectOption(dbUrl, dbUser, dbPassword,
-                scanner, sqlQuery, "district");
-    }
-
 
     /**
      * Displays the districts recorded for the selected country.
+     * Only districts belonging to that country are displayed.
+     *
+     * @param dbUrl       the database connection URL
+     * @param dbUser      the database username
+     * @param dbPassword  the database password
+     * @param scanner     the shared Scanner for user input
+     * @param countryCode the code of the selected country
+     * @return the selected district, or null if cancelled
+     * @throws SQLException if the database query fails
      */
     public static String selectDistrict(String dbUrl, String dbUser,
                                         String dbPassword, Scanner scanner,
@@ -175,9 +138,10 @@ public class DatabaseOptions {
      * to select one. This method handles the menu and input.
      *
      * @param optionName the type of option being selected
-     * @param options the list of available options
-     * @param scanner the shared Scanner for user input
+     * @param options    the list of available options
+     * @param scanner    the shared Scanner for user input
      * @return the selected option, or null if cancelled
+     * or no further input is available
      */
     private static String selectOption(String optionName,
                                        List<String> options,
@@ -207,6 +171,11 @@ public class DatabaseOptions {
 
             System.out.print("\nSelect a " + optionName +
                     " (0-" + options.size() + "): ");
+
+            // Cancel the selection if there is no more input
+            if (!scanner.hasNextLine()) {
+                return null;
+            }
 
             String input = scanner.nextLine().trim();
 
@@ -244,13 +213,13 @@ public class DatabaseOptions {
      * Retrieves filter options from the database and passes
      * them to the shared selection menu.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
-     * @param sqlQuery the SQL query used to retrieve options
+     * @param scanner    the shared Scanner for user input
+     * @param sqlQuery   the SQL query used to retrieve options
      * @param optionName the name of the filter being selected
-     * @param filters parameters for the SQL query
+     * @param filters    parameters for the SQL query
      * @return the selected option, or null if cancelled
      * @throws SQLException if the database query fails
      */
@@ -284,7 +253,7 @@ public class DatabaseOptions {
             }
         }
 
-        // Reuse the same menu for continents and regions
+        // Reuse the shared menu to display the available filter options
         return selectOption(optionName, options, scanner);
     }
 }

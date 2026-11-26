@@ -1,10 +1,6 @@
 
 package com.napier.devops;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -19,7 +15,7 @@ public class ReportServiceDev {
      * Runs the report selected by the user from the menu.
      *
      * @param selection the report selected from the main menu
-     * @param scanner the shared Scanner for user input
+     * @param scanner   the shared Scanner for user input
      */
     public static void runReport(
             ReportMenu.ReportSelection selection, Scanner scanner) {
@@ -120,16 +116,21 @@ public class ReportServiceDev {
                 report16(dbUrl, dbUser, dbPassword, scanner);
                 break;
 
-            case 17: report17(dbUrl, dbUser, dbPassword);
+            case 17:
+                report17(dbUrl, dbUser, dbPassword);
                 break;
 
-            case 18: report18(dbUrl, dbUser, dbPassword, scanner);
+            case 18:
+                report18(dbUrl, dbUser, dbPassword, scanner);
                 break;
-            case 19: report19(dbUrl, dbUser, dbPassword,scanner);
+            case 19:
+                report19(dbUrl, dbUser, dbPassword, scanner);
                 break;
-            case 20: report20(dbUrl, dbUser, dbPassword,scanner);
+            case 20:
+                report20(dbUrl, dbUser, dbPassword, scanner);
                 break;
-            case 21: report21(dbUrl, dbUser, dbPassword,scanner);
+            case 21:
+                report21(dbUrl, dbUser, dbPassword, scanner);
                 break;
             case 22:
                 report22(dbUrl, dbUser, dbPassword, scanner);
@@ -167,9 +168,8 @@ public class ReportServiceDev {
                 break;
 
             default:
-                System.out.println("\n----------------------------------------");
-                System.out.println("Report " + reportNumber + " is still in development.");
-                System.out.println("----------------------------------------\n");
+                // Handle any report number that is not supported
+                System.out.println("Invalid report number: " + reportNumber);
                 break;
         }
     }
@@ -178,8 +178,8 @@ public class ReportServiceDev {
      * Report 1 - Displays all countries in the world.
      * Countries are sorted from largest population to smallest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
      */
     public static void report1(String dbUrl, String dbUser, String dbPassword) {
@@ -190,11 +190,17 @@ public class ReportServiceDev {
 
         /*
          * Retrieve the required country information.
-         * ORDER BY Population DESC places countries with
-         * the largest population at the top of the report.
+         * Join the city table to display the capital city name
+         * instead of its ID.
+         * A LEFT JOIN keeps countries without a recorded capital.
+         * Sort the countries from largest population to smallest.
          */
-        String sqlQuery = "SELECT Code, Name, Continent, Region, " +
-                "Population, Capital FROM country ORDER BY Population DESC;";
+        String sqlQuery = "SELECT country.Code, country.Name, " +
+                "country.Continent, country.Region, country.Population, " +
+                "city.Name AS Capital " +
+                "FROM country " +
+                "LEFT JOIN city ON country.Capital = city.ID " +
+                "ORDER BY country.Population DESC;";
 
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
              Statement stmt = conn.createStatement();
@@ -219,11 +225,10 @@ public class ReportServiceDev {
                 String continent = rs.getString("Continent");
                 String region = rs.getString("Region");
                 long population = rs.getLong("Population");
-                int capital = rs.getInt("Capital");
+                String capital = rs.getString("Capital");
 
-                // Some countries may not have a capital recorded
-                String capitalValue = rs.wasNull()
-                        ? "N/A" : String.valueOf(capital);
+// Display N/A if the country has no recorded capital
+                String capitalValue = capital == null ? "N/A" : capital;
 
                 // Display the results using aligned columns
                 System.out.printf("%-8s %-45s %-18s %-28s %-15d %-10s%n",
@@ -245,10 +250,10 @@ public class ReportServiceDev {
      * Report 2 - Displays countries in a selected continent.
      * Countries are sorted from largest population to smallest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report2(String dbUrl, String dbUser,
                                String dbPassword, Scanner scanner) {
@@ -279,12 +284,19 @@ public class ReportServiceDev {
 
         /*
          * Retrieve countries belonging to the selected continent.
-         * A PreparedStatement is used to safely include the
-         * continent entered by the user in the SQL query.
+         * Join the city table to display the capital city name
+         * instead of its ID.
+         * A LEFT JOIN keeps countries without a recorded capital.
+         * A PreparedStatement safely passes the selected continent
+         * into the SQL query.
          */
-        String sqlQuery = "SELECT Code, Name, Continent, Region, " +
-                "Population, Capital FROM country " +
-                "WHERE Continent = ? ORDER BY Population DESC;";
+        String sqlQuery = "SELECT country.Code, country.Name, " +
+                "country.Continent, country.Region, country.Population, " +
+                "city.Name AS Capital " +
+                "FROM country " +
+                "LEFT JOIN city ON country.Capital = city.ID " +
+                "WHERE country.Continent = ? " +
+                "ORDER BY country.Population DESC;";
 
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
              PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
@@ -313,11 +325,10 @@ public class ReportServiceDev {
                     String countryContinent = rs.getString("Continent");
                     String region = rs.getString("Region");
                     long population = rs.getLong("Population");
-                    int capital = rs.getInt("Capital");
+                    String capital = rs.getString("Capital");
 
-                    // Show N/A if no capital is recorded
-                    String capitalValue = rs.wasNull()
-                            ? "N/A" : String.valueOf(capital);
+// Display N/A if the country has no recorded capital
+                    String capitalValue = capital == null ? "N/A" : capital;
 
                     // Print the country information in aligned columns
                     System.out.printf("%-8s %-45s %-18s %-28s %-15d %-10s%n",
@@ -344,10 +355,10 @@ public class ReportServiceDev {
      * Report 3 - Displays all countries in a selected region.
      * Countries are sorted from largest population to smallest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report3(String dbUrl, String dbUser,
                                String dbPassword, Scanner scanner) {
@@ -378,12 +389,19 @@ public class ReportServiceDev {
 
         /*
          * Retrieve countries belonging to the selected region.
-         * The PreparedStatement safely passes the region into
-         * the query, and DESC sorts by largest population first.
+         * Join the city table to display the capital city name
+         * instead of its ID.
+         * A LEFT JOIN keeps countries without a recorded capital.
+         * The PreparedStatement safely passes the selected region
+         * into the query, and DESC sorts the largest populations first.
          */
-        String sqlQuery = "SELECT Code, Name, Continent, Region, " +
-                "Population, Capital FROM country " +
-                "WHERE Region = ? ORDER BY Population DESC;";
+        String sqlQuery = "SELECT country.Code, country.Name, " +
+                "country.Continent, country.Region, country.Population, " +
+                "city.Name AS Capital " +
+                "FROM country " +
+                "LEFT JOIN city ON country.Capital = city.ID " +
+                "WHERE country.Region = ? " +
+                "ORDER BY country.Population DESC;";
 
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
              PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
@@ -412,11 +430,10 @@ public class ReportServiceDev {
                     String continent = rs.getString("Continent");
                     String countryRegion = rs.getString("Region");
                     long population = rs.getLong("Population");
-                    int capital = rs.getInt("Capital");
+                    String capital = rs.getString("Capital");
 
-                    // Display N/A if the capital is not recorded
-                    String capitalValue = rs.wasNull()
-                            ? "N/A" : String.valueOf(capital);
+// Display N/A if the country has no recorded capital
+                    String capitalValue = capital == null ? "N/A" : capital;
 
                     // Print each country's information in aligned columns
                     System.out.printf("%-8s %-45s %-18s %-28s %-15d %-10s%n",
@@ -444,10 +461,10 @@ public class ReportServiceDev {
      * Report 4 - Displays the top N populated countries in the world.
      * The user enters how many countries they want to display.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report4(String dbUrl, String dbUser,
                                String dbPassword, Scanner scanner) {
@@ -465,6 +482,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of countries to display (0 to cancel): ");
+
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
 
             String input = scanner.nextLine().trim();
 
@@ -491,12 +514,18 @@ public class ReportServiceDev {
 
         /*
          * Retrieve countries from the world database.
+         * Join the city table to display the capital city name
+         * instead of its ID.
+         * A LEFT JOIN keeps countries without a recorded capital.
          * ORDER BY Population DESC sorts the largest populations first.
          * LIMIT ? restricts the results to the number requested.
          */
-        String sqlQuery = "SELECT Code, Name, Continent, Region, " +
-                "Population, Capital FROM country " +
-                "ORDER BY Population DESC LIMIT ?;";
+        String sqlQuery = "SELECT country.Code, country.Name, " +
+                "country.Continent, country.Region, country.Population, " +
+                "city.Name AS Capital " +
+                "FROM country " +
+                "LEFT JOIN city ON country.Capital = city.ID " +
+                "ORDER BY country.Population DESC LIMIT ?;";
 
         try (Connection conn = DriverManager.getConnection(
                 dbUrl, dbUser, dbPassword);
@@ -526,11 +555,10 @@ public class ReportServiceDev {
                     String continent = rs.getString("Continent");
                     String region = rs.getString("Region");
                     long population = rs.getLong("Population");
-                    int capital = rs.getInt("Capital");
+                    String capital = rs.getString("Capital");
 
-                    // Show N/A if the capital is not recorded
-                    String capitalValue = rs.wasNull()
-                            ? "N/A" : String.valueOf(capital);
+// Display N/A if the country has no recorded capital
+                    String capitalValue = capital == null ? "N/A" : capital;
 
                     // Print the country details in aligned columns
                     System.out.printf("%-8s %-45s %-18s %-28s %-15d %-10s%n",
@@ -555,10 +583,10 @@ public class ReportServiceDev {
      * Report 5 - Displays the top N populated countries
      * in a selected continent.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report5(String dbUrl, String dbUser,
                                String dbPassword, Scanner scanner) {
@@ -593,6 +621,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of countries to display (0 to cancel): ");
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
             String input = scanner.nextLine().trim();
 
             try {
@@ -616,13 +650,19 @@ public class ReportServiceDev {
 
         /*
          * Retrieve countries belonging to the selected continent.
-         * ORDER BY Population DESC sorts the largest populations first.
-         * LIMIT restricts the results to the number requested.
+         * Join the city table to display the capital city name
+         * instead of its ID.
+         * A LEFT JOIN keeps countries without a recorded capital.
+         * Sort the countries from largest population to smallest
+         * and limit the results to the number requested.
          */
-        String sqlQuery = "SELECT Code, Name, Continent, Region, " +
-                "Population, Capital FROM country " +
-                "WHERE Continent = ? " +
-                "ORDER BY Population DESC LIMIT ?;";
+        String sqlQuery = "SELECT country.Code, country.Name, " +
+                "country.Continent, country.Region, country.Population, " +
+                "city.Name AS Capital " +
+                "FROM country " +
+                "LEFT JOIN city ON country.Capital = city.ID " +
+                "WHERE country.Continent = ? " +
+                "ORDER BY country.Population DESC LIMIT ?;";
 
         try (Connection conn = DriverManager.getConnection(
                 dbUrl, dbUser, dbPassword);
@@ -653,11 +693,10 @@ public class ReportServiceDev {
                     String countryContinent = rs.getString("Continent");
                     String region = rs.getString("Region");
                     long population = rs.getLong("Population");
-                    int capital = rs.getInt("Capital");
+                    String capital = rs.getString("Capital");
 
-                    // Show N/A if the capital is not recorded
-                    String capitalValue = rs.wasNull()
-                            ? "N/A" : String.valueOf(capital);
+// Display N/A if the country has no recorded capital
+                    String capitalValue = capital == null ? "N/A" : capital;
 
                     // Display the country details in aligned columns
                     System.out.printf("%-8s %-45s %-18s %-28s %-15d %-10s%n",
@@ -684,10 +723,10 @@ public class ReportServiceDev {
      * Report 6 - Displays the top N populated countries
      * in a selected region.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report6(String dbUrl, String dbUser,
                                String dbPassword, Scanner scanner) {
@@ -722,6 +761,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of countries to display (0 to cancel): ");
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
             String input = scanner.nextLine().trim();
 
             try {
@@ -744,13 +789,20 @@ public class ReportServiceDev {
         }
 
         /*
-         * Find the most populated countries in the selected region.
-         * The LIMIT parameter controls how many results are returned.
+         * Retrieve countries belonging to the selected region.
+         * Join the city table to display the capital city name
+         * instead of its ID.
+         * A LEFT JOIN keeps countries without a recorded capital.
+         * Sort the countries from largest population to smallest
+         * and limit the results to the number requested.
          */
-        String sqlQuery = "SELECT Code, Name, Continent, Region, " +
-                "Population, Capital FROM country " +
-                "WHERE Region = ? " +
-                "ORDER BY Population DESC LIMIT ?;";
+        String sqlQuery = "SELECT country.Code, country.Name, " +
+                "country.Continent, country.Region, country.Population, " +
+                "city.Name AS Capital " +
+                "FROM country " +
+                "LEFT JOIN city ON country.Capital = city.ID " +
+                "WHERE country.Region = ? " +
+                "ORDER BY country.Population DESC LIMIT ?;";
 
         try (Connection conn = DriverManager.getConnection(
                 dbUrl, dbUser, dbPassword);
@@ -781,11 +833,10 @@ public class ReportServiceDev {
                     String continent = rs.getString("Continent");
                     String countryRegion = rs.getString("Region");
                     long population = rs.getLong("Population");
-                    int capital = rs.getInt("Capital");
+                    String capital = rs.getString("Capital");
 
-                    // Some countries may not have a capital recorded
-                    String capitalValue = rs.wasNull()
-                            ? "N/A" : String.valueOf(capital);
+// Display N/A if the country has no recorded capital
+                    String capitalValue = capital == null ? "N/A" : capital;
 
                     System.out.printf("%-8s %-45s %-18s %-28s %-15d %-10s%n",
                             code, name, continent, countryRegion,
@@ -811,8 +862,8 @@ public class ReportServiceDev {
      * Report 7 - Displays all cities in the world,
      * ordered from the largest population to the smallest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
      */
     public static void report7(String dbUrl, String dbUser,
@@ -875,10 +926,10 @@ public class ReportServiceDev {
      * Report 8 - Shows all cities in a selected continent,
      * ordered from the highest population to the lowest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner used for user input
+     * @param scanner    the shared Scanner used for user input
      */
     public static void report8(String dbUrl, String dbUser,
                                String dbPassword, Scanner scanner) {
@@ -963,10 +1014,10 @@ public class ReportServiceDev {
      * Report 9 - Shows all cities in a selected region,
      * starting with the most populated.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report9(String dbUrl, String dbUser,
                                String dbPassword, Scanner scanner) {
@@ -1052,10 +1103,10 @@ public class ReportServiceDev {
      * Report 10 - Displays all cities in a selected country,
      * ordered from the largest population to the smallest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report10(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -1147,10 +1198,10 @@ public class ReportServiceDev {
      * Report 11 - Displays all cities in a selected district,
      * ordered from the largest population to the smallest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report11(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -1159,43 +1210,58 @@ public class ReportServiceDev {
         System.out.println("Report 11 - All Cities in a District");
         System.out.println("----------------------------------------\n");
 
+        String countryCode;
         String district;
 
-        // Allow the user to select a district from the database
+// Allow the user to select a country first
         try {
-            district = DatabaseOptions.selectDistrict(
+            countryCode = DatabaseOptions.selectCountry(
                     dbUrl, dbUser, dbPassword, scanner);
 
+            // Return to the menu if the country selection is cancelled
+            if (countryCode == null) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
+            // Display only districts belonging to the selected country
+            district = DatabaseOptions.selectDistrict(
+                    dbUrl, dbUser, dbPassword, scanner, countryCode);
+
         } catch (SQLException e) {
-            System.err.println("Unable to load districts: " + e.getMessage());
+            System.err.println("Unable to load countries or districts: "
+                    + e.getMessage());
             return;
         }
 
-        // Return to the menu if the user cancels
+// Return to the menu if the district selection is cancelled
         if (district == null) {
             System.out.println("Report cancelled.");
             return;
         }
 
         /*
-         * Retrieve cities belonging to the selected district.
-         * Join the country table to show the country name
-         * and sort the results by population.
+         * Retrieve cities belonging to the selected country and district.
+         * Filtering by both prevents cities from different countries
+         * with the same district name from appearing in the report.
+         * Join the country table to display the country name
+         * and sort the cities from largest population to smallest.
          */
         String sqlQuery = "SELECT city.Name AS CityName, " +
                 "country.Name AS CountryName, " +
                 "city.District, city.Population " +
                 "FROM city " +
                 "JOIN country ON city.CountryCode = country.Code " +
-                "WHERE city.District = ? " +
+                "WHERE city.CountryCode = ? AND city.District = ? " +
                 "ORDER BY city.Population DESC;";
 
         try (Connection conn = DriverManager.getConnection(
                 dbUrl, dbUser, dbPassword);
              PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
 
-            // Set the district selected by the user
-            stmt.setString(1, district);
+            // Set the country and district selected by the user
+            stmt.setString(1, countryCode);
+            stmt.setString(2, district);
 
             try (ResultSet rs = stmt.executeQuery()) {
 
@@ -1226,7 +1292,8 @@ public class ReportServiceDev {
                     System.out.println("No cities found for the selected district.");
                 }
 
-                System.out.println("\nSelected district: " + district);
+                System.out.println("\nSelected country code: " + countryCode);
+                System.out.println("Selected district: " + district);
                 System.out.println("Total cities displayed: " + rowCount);
             }
 
@@ -1240,10 +1307,10 @@ public class ReportServiceDev {
      * Report 12 - Displays the top N populated cities in the world.
      * The user chooses how many cities to display.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report12(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -1262,6 +1329,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of cities to display (0 to cancel): ");
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
             String input = scanner.nextLine().trim();
 
             try {
@@ -1343,10 +1416,10 @@ public class ReportServiceDev {
      * Report 13 - Displays the top N populated cities
      * in a selected continent.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report13(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -1382,6 +1455,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of cities to display (0 to cancel): ");
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
             String input = scanner.nextLine().trim();
 
             try {
@@ -1470,10 +1549,10 @@ public class ReportServiceDev {
      * Report 14 - Displays the top N populated cities
      * in a selected region.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report14(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -1509,6 +1588,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of cities to display (0 to cancel): ");
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
             String input = scanner.nextLine().trim();
 
             try {
@@ -1597,10 +1682,10 @@ public class ReportServiceDev {
      * Report 15 - Displays the top N populated cities
      * in a selected country.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report15(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -1636,6 +1721,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of cities to display (0 to cancel): ");
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
             String input = scanner.nextLine().trim();
 
             try {
@@ -1724,10 +1815,10 @@ public class ReportServiceDev {
      * Report 16 - Displays the top N populated cities
      * in a selected district.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report16(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -1736,19 +1827,31 @@ public class ReportServiceDev {
         System.out.println("Report 16 - Top N Cities in a District");
         System.out.println("----------------------------------------\n");
 
+        String countryCode;
         String district;
 
-        // Allow the user to select a district from the database
+// Allow the user to select a country first
         try {
-            district = DatabaseOptions.selectDistrict(
+            countryCode = DatabaseOptions.selectCountry(
                     dbUrl, dbUser, dbPassword, scanner);
 
+            // Return to the menu if the country selection is cancelled
+            if (countryCode == null) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
+            // Display only districts belonging to the selected country
+            district = DatabaseOptions.selectDistrict(
+                    dbUrl, dbUser, dbPassword, scanner, countryCode);
+
         } catch (SQLException e) {
-            System.err.println("Unable to load districts: " + e.getMessage());
+            System.err.println("Unable to load countries or districts: "
+                    + e.getMessage());
             return;
         }
 
-        // Return to the menu if the user cancels
+// Return to the menu if the district selection is cancelled
         if (district == null) {
             System.out.println("Report cancelled.");
             return;
@@ -1763,6 +1866,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of cities to display (0 to cancel): ");
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
             String input = scanner.nextLine().trim();
 
             try {
@@ -1785,25 +1894,28 @@ public class ReportServiceDev {
         }
 
         /*
-         * Retrieve cities belonging to the selected district.
+         * Retrieve cities belonging to the selected country and district.
+         * Filtering by both prevents cities from different countries
+         * with the same district name from appearing in the report.
          * Join the country table to display the country name.
-         * Sort by population and limit the results.
+         * Sort by population and limit the results to the number requested.
          */
         String sqlQuery = "SELECT city.Name AS CityName, " +
                 "country.Name AS CountryName, " +
                 "city.District, city.Population " +
                 "FROM city " +
                 "JOIN country ON city.CountryCode = country.Code " +
-                "WHERE city.District = ? " +
+                "WHERE city.CountryCode = ? AND city.District = ? " +
                 "ORDER BY city.Population DESC LIMIT ?;";
 
         try (Connection conn = DriverManager.getConnection(
                 dbUrl, dbUser, dbPassword);
              PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
 
-            // Set the selected district and number of cities
-            stmt.setString(1, district);
-            stmt.setInt(2, numberOfCities);
+            // Set the selected country, district and number of cities
+            stmt.setString(1, countryCode);
+            stmt.setString(2, district);
+            stmt.setInt(3, numberOfCities);
 
             try (ResultSet rs = stmt.executeQuery()) {
 
@@ -1835,7 +1947,8 @@ public class ReportServiceDev {
                     System.out.println("No cities found for the selected district.");
                 }
 
-                System.out.println("\nSelected district: " + district);
+                System.out.println("\nSelected country code: " + countryCode);
+                System.out.println("Selected district: " + district);
                 System.out.println("Top " + numberOfCities
                         + " populated cities requested.");
                 System.out.println("Total cities displayed: " + rowCount);
@@ -1881,11 +1994,9 @@ public class ReportServiceDev {
                 long population = rs.getLong("Population");
 
 
-
-
                 // Display the results using aligned columns
                 System.out.printf("%-45s %-45s  %-15s%n",
-                        capital,country,population);
+                        capital, country, population);
 
                 rowCount++;
             }
@@ -1902,10 +2013,10 @@ public class ReportServiceDev {
      * Report 18 - Displays all capital cities in a selected continent.
      * Capital cities are sorted from largest population to smallest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report18(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -1986,14 +2097,15 @@ public class ReportServiceDev {
             System.err.println("Database error: " + e.getMessage());
         }
     }
+
     /**
      * Report 19 - Displays all capital cities in a selected region.
      * Capital cities are sorted from largest population to smallest.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report19(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -2078,36 +2190,51 @@ public class ReportServiceDev {
         }
     }
 
+    /**
+     * Report 20 - Displays the top N populated capital cities
+     * in the world.
+     *
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
+     * @param dbPassword the database password
+     * @param scanner    the shared Scanner for user input
+     */
     public static void report20(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
 
         System.out.println("\n----------------------------------------");
-        System.out.println("Report 20 - Top N populated capital cities in the world");
+        System.out.println("Report 20 - Top N Populated Capital Cities in the World");
         System.out.println("----------------------------------------\n");
 
-        int numberOfCites;
+        int numberOfCities;
 
         /*
-         * Ask the user how many countries to display.
-         * Keep asking until a valid positive number is entered.
+         * Ask the user how many capital cities to display.
+         * Keep asking until a positive whole number is entered.
          */
         while (true) {
 
-            System.out.print("Enter the number of countries to display (0 to cancel): ");
+            System.out.print("Enter the number of capital cities to display (0 to cancel): ");
+
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
 
             String input = scanner.nextLine().trim();
 
             try {
-                numberOfCites = Integer.parseInt(input);
+                numberOfCities = Integer.parseInt(input);
 
                 // Return to the menu if the user enters 0
-                if (numberOfCites == 0) {
+                if (numberOfCities == 0) {
                     System.out.println("Report cancelled.");
                     return;
                 }
 
                 // Only positive numbers are accepted
-                if (numberOfCites > 0) {
+                if (numberOfCities > 0) {
                     break;
                 }
 
@@ -2119,58 +2246,53 @@ public class ReportServiceDev {
         }
 
         /*
-         * Retrieve countries from the world database.
-         * ORDER BY Population DESC sorts the largest populations first.
-         * LIMIT ? restricts the results to the number requested.
+         * Retrieve capital cities from the world database.
+         * Join the country and city tables using the capital city ID.
+         * Sort the cities from largest population to smallest
+         * and limit the results to the number requested.
          */
         String sqlQuery = "SELECT city.Name AS Capital_City, " +
                 "country.Name AS Country, " +
                 "city.Population FROM country " +
                 "JOIN city ON country.Capital = city.ID " +
-                "ORDER BY city.Population DESC LIMIT ?; -- Replace N with your target count (e.g., 5, 10, 20)";
+                "ORDER BY city.Population DESC LIMIT ?;";
 
         try (Connection conn = DriverManager.getConnection(
                 dbUrl, dbUser, dbPassword);
              PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
 
-            // Set the maximum number of countries to return
-            stmt.setInt(1, numberOfCites);
+            // Set the maximum number of capital cities to return
+            stmt.setInt(1, numberOfCities);
 
             try (ResultSet rs = stmt.executeQuery()) {
 
                 // Display the report headings
-                System.out.printf("%-45s %-45s  %-10s%n",
-                        "Capital_City", "Country", "Population");
+                System.out.printf("%-45s %-45s %-15s%n",
+                        "Capital City", "Country", "Population");
 
                 System.out.println("------------------------------------------------" +
                         "------------------------------------------------" +
-                        "------------------------------");
+                        "--------------------");
 
                 int rowCount = 0;
 
-                // Display each country returned by the query
+                // Display each capital city returned by the query
                 while (rs.next()) {
 
-                    String city = rs.getString("Capital_City");
-                    String county = rs.getString("Country");
+                    String cityName = rs.getString("Capital_City");
+                    String countryName = rs.getString("Country");
                     long population = rs.getLong("Population");
 
-
-                    // Show N/A if the capital is not recorded
-
-
-                    // Print the country details in aligned columns
-                    System.out.printf("%-45s %-45s %-10s%n",
-                            city, county,
-                            population);
+                    // Print the capital city details in aligned columns
+                    System.out.printf("%-45s %-45s %-15d%n",
+                            cityName, countryName, population);
 
                     rowCount++;
                 }
 
-                System.out.println("\nTop " + numberOfCites
-                        + " populated countries requested.");
-                System.out.println("Total countries displayed: " + rowCount);
-
+                System.out.println("\nTop " + numberOfCities
+                        + " populated capital cities requested.");
+                System.out.println("Total capital cities displayed: " + rowCount);
             }
 
         } catch (SQLException e) {
@@ -2211,6 +2333,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("Enter the number of cites to display (0 to cancel): ");
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
+
             String input = scanner.nextLine().trim();
 
             try {
@@ -2293,10 +2421,10 @@ public class ReportServiceDev {
     /**
      * Report 22 - Displays the top N populated capital cities in a selected region.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
-     * @param scanner the shared Scanner for user input
+     * @param scanner    the shared Scanner for user input
      */
     public static void report22(String dbUrl, String dbUser,
                                 String dbPassword, Scanner scanner) {
@@ -2328,6 +2456,12 @@ public class ReportServiceDev {
         while (true) {
 
             System.out.print("\nEnter the number of capital cities to display (0 to cancel): ");
+
+            // Cancel the report if there is no more input
+            if (!scanner.hasNextLine()) {
+                System.out.println("Report cancelled.");
+                return;
+            }
 
             String input = scanner.nextLine().trim();
 
@@ -2405,21 +2539,14 @@ public class ReportServiceDev {
             System.err.println("Database error: " + e.getMessage());
         }
     }
-    /**
-     * Report 23 - Displays the population breakdown by continent.
-     *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
-     * @param dbPassword the database password
-     */
 
     /**
      * Report 23 - Displays the population breakdown for each continent.
      * Shows the total population, population living in cities,
      * population outside cities and their percentages.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
      */
     public static void report23(String dbUrl, String dbUser, String dbPassword) {
@@ -2467,23 +2594,40 @@ public class ReportServiceDev {
                 long totalPopulation = rs.getLong("TotalPopulation");
                 long cityPopulation = rs.getLong("CityPopulation");
 
-                // Calculate the population outside the recorded cities
-                long outsideCities = totalPopulation - cityPopulation;
+                /*
+                 * Check that the recorded city population does not exceed
+                 * the total population before calculating the percentages.
+                 * Display N/A if the database contains inconsistent values.
+                 */
+                if (cityPopulation > totalPopulation) {
 
-                double cityPercentage = 0;
-                double outsidePercentage = 0;
+                    System.out.printf(
+                            "%-18s %,18d %,18d %12s %18s %12s%n",
+                            continent,
+                            totalPopulation,
+                            cityPopulation,
+                            "N/A",
+                            "N/A",
+                            "N/A"
+                    );
 
-                // Avoid dividing by zero
-                if (totalPopulation > 0) {
-                    cityPercentage =
-                            (cityPopulation * 100.0) / totalPopulation;
-
-                    outsidePercentage =
-                            (outsideCities * 100.0) / totalPopulation;
+                    rowCount++;
+                    continue;
                 }
 
+// Calculate the population outside the recorded cities
+                long outsideCities = totalPopulation - cityPopulation;
+
+// Use the existing method to calculate population percentages
+                String cityPercentage =
+                        populationPercentage(cityPopulation, totalPopulation);
+
+                String outsidePercentage =
+                        populationPercentage(outsideCities, totalPopulation);
+
+// Display the population information in aligned columns
                 System.out.printf(
-                        "%-18s %,18d %,18d %11.2f%% %,18d %11.2f%%%n",
+                        "%-18s %,18d %,18d %12s %,18d %12s%n",
                         continent,
                         totalPopulation,
                         cityPopulation,
@@ -2507,7 +2651,6 @@ public class ReportServiceDev {
     }
 
 
-
     /**
      * Report 24 - Displays the population breakdown by region.
      *
@@ -2521,8 +2664,8 @@ public class ReportServiceDev {
      * Shows the total population, population living in cities,
      * population outside cities and their percentages.
      *
-     * @param dbUrl the database connection URL
-     * @param dbUser the database username
+     * @param dbUrl      the database connection URL
+     * @param dbUser     the database username
      * @param dbPassword the database password
      */
     public static void report24(String dbUrl, String dbUser, String dbPassword) {
@@ -2570,23 +2713,40 @@ public class ReportServiceDev {
                 long totalPopulation = rs.getLong("TotalPopulation");
                 long cityPopulation = rs.getLong("CityPopulation");
 
-                // Calculate the population outside the recorded cities
-                long outsideCities = totalPopulation - cityPopulation;
+                /*
+                 * Check that the recorded city population does not exceed
+                 * the total population before calculating the percentages.
+                 * Display N/A if the database contains inconsistent values.
+                 */
+                if (cityPopulation > totalPopulation) {
 
-                double cityPercentage = 0;
-                double outsidePercentage = 0;
+                    System.out.printf(
+                            "%-30s %,18d %,18d %12s %18s %12s%n",
+                            region,
+                            totalPopulation,
+                            cityPopulation,
+                            "N/A",
+                            "N/A",
+                            "N/A"
+                    );
 
-                // Avoid dividing by zero
-                if (totalPopulation > 0) {
-                    cityPercentage =
-                            (cityPopulation * 100.0) / totalPopulation;
-
-                    outsidePercentage =
-                            (outsideCities * 100.0) / totalPopulation;
+                    rowCount++;
+                    continue;
                 }
 
+// Calculate the population outside the recorded cities
+                long outsideCities = totalPopulation - cityPopulation;
+
+// Use the existing method to calculate population percentages
+                String cityPercentage =
+                        populationPercentage(cityPopulation, totalPopulation);
+
+                String outsidePercentage =
+                        populationPercentage(outsideCities, totalPopulation);
+
+// Display the population information in aligned columns
                 System.out.printf(
-                        "%-30s %,18d %,18d %11.2f%% %,18d %11.2f%%%n",
+                        "%-30s %,18d %,18d %12s %,18d %12s%n",
                         region,
                         totalPopulation,
                         cityPopulation,
@@ -2608,9 +2768,6 @@ public class ReportServiceDev {
             System.err.println("Database error: " + e.getMessage());
         }
     }
-
-
-
 
 
     /**
@@ -2755,15 +2912,9 @@ public class ReportServiceDev {
     }
 
 
-    public static String readSqlFile(String filePath) throws IOException {
-
-        // Read the SQL file using UTF-8 encoding
-        return Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
-    }
-
     /**
      * Report 31 - Shows the population of a selected city.
-     *
+     * <p>
      * The user first chooses a country and then selects
      * a city from that country. The population is retrieved
      * directly from the world database.
@@ -2847,6 +2998,12 @@ public class ReportServiceDev {
                     System.out.print(
                             "Enter your choice (0-" + cityIds.size() + "): "
                     );
+
+                    // Cancel the report if there is no more input
+                    if (!scanner.hasNextLine()) {
+                        System.out.println("Report cancelled.");
+                        return;
+                    }
 
                     String answer = scanner.nextLine().trim();
 
@@ -2932,7 +3089,7 @@ public class ReportServiceDev {
     /**
      * Report 32 - Displays population information for
      * Chinese, English, Hindi, Spanish and Arabic.
-     *
+     * <p>
      * The database stores the percentage of each country's
      * population that speaks a particular language.
      * We use those percentages to estimate the total number
