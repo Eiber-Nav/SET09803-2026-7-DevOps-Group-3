@@ -1,8 +1,8 @@
-FROM mysql/mysql-server:latest
+# Use MySQL 8.0 for a consistent database environment
+FROM mysql:8.0
 
-# Copy initialization SQL script into MySQL auto-execution directory
+# Copy the world database script so MySQL can load it on first startup
 COPY world.sql /docker-entrypoint-initdb.d/
 
-# Set root password and grant access
-ENV MYSQL_ROOT_PASSWORD=D@to0000
+# Allow the Java application to connect from another container
 ENV MYSQL_ROOT_HOST=%
